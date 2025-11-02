@@ -12,7 +12,8 @@ import bookingRoutes from './routes/bookingRoutes.js';
 dotenv.config();
 
 const app = express();
-const PORT = process.env.PORT || 5000;
+const PORT = process.env.PORT || 5001;
+
 
 // --- Middlewares ---
 // Enable CORS for all routes (allows frontend on port 3000 to talk to backend on 5000)
