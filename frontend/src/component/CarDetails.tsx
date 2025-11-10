@@ -1,11 +1,11 @@
 // frontend/src/components/CarDetails.tsx
 
-import React, { useState, useEffect, useCallback } from 'react';
-import { useParams } from 'react-router-dom'; // Gets the :id from the URL
-import Flatpickr from 'react-flatpickr'; // The React calendar component
+import React, { useState, useEffect, useCallback } from "react";
+import Flatpickr from "react-flatpickr"; // The React calendar component
+import { useParams } from "react-router-dom"; // Gets the :id from the URL
 
 // Import the flatpickr CSS
-import "flatpickr/dist/themes/material_blue.css"; 
+import "flatpickr/dist/themes/material_blue.css";
 // You can change the theme, e.g., "flatpickr/dist/flatpickr.min.css"
 
 // Define the shape of the disabled dates
@@ -21,21 +21,23 @@ export const CarDetails = () => {
   // 2. State variables
   const [selectedDates, setSelectedDates] = useState<Date[]>([]);
   const [bookedDates, setBookedDates] = useState<DisabledDateRange[]>([]);
-  const [message, setMessage] = useState<string>('');
-  const [messageType, setMessageType] = useState<'success' | 'error' | 'info'>('info');
+  const [message, setMessage] = useState<string>("");
+  const [messageType, setMessageType] = useState<"success" | "error" | "info">(
+    "info",
+  );
 
   // 3. Function to fetch availability
   const fetchAvailability = useCallback(async () => {
     try {
       const response = await fetch(`/api/cars/${id}/availability`);
       if (!response.ok) {
-        throw new Error('Failed to fetch availability');
+        throw new Error("Failed to fetch availability");
       }
       const data: DisabledDateRange[] = await response.json();
       setBookedDates(data);
     } catch (error: any) {
       setMessage(error.message);
-      setMessageType('error');
+      setMessageType("error");
     }
   }, [id]); // This function depends on the 'id'
 
@@ -49,29 +51,29 @@ export const CarDetails = () => {
   // 5. Function to handle the booking
   const handleBooking = async () => {
     if (selectedDates.length < 2) {
-      setMessage('Please select a start and end date.');
-      setMessageType('error');
+      setMessage("Please select a start and end date.");
+      setMessageType("error");
       return;
     }
 
     const [startDate, endDate] = selectedDates;
-    const token = localStorage.getItem('token'); // Get token from Phase 1
+    const token = localStorage.getItem("token"); // Get token from Phase 1
 
     if (!token) {
-      setMessage('You must be logged in to book.');
-      setMessageType('error');
+      setMessage("You must be logged in to book.");
+      setMessageType("error");
       return;
     }
 
-    setMessage('Processing...');
-    setMessageType('info');
+    setMessage("Processing...");
+    setMessageType("info");
 
     try {
-      const response = await fetch('/api/bookings', {
-        method: 'POST',
+      const response = await fetch("/api/bookings", {
+        method: "POST",
         headers: {
-          'Content-Type': 'application/json',
-          'Authorization': `Bearer ${token}`,
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
         },
         body: JSON.stringify({
           carId: parseInt(id!),
@@ -80,24 +82,26 @@ export const CarDetails = () => {
         }),
       });
 
-      if (response.status === 409) { // Conflict
-        throw new Error('These dates are unavailable. Please select new dates.');
+      if (response.status === 409) {
+        // Conflict
+        throw new Error(
+          "These dates are unavailable. Please select new dates.",
+        );
       }
       if (!response.ok) {
-        throw new Error('Booking failed. Please try again.');
+        throw new Error("Booking failed. Please try again.");
       }
 
       // Success!
-      setMessage('Booking successful!');
-      setMessageType('success');
+      setMessage("Booking successful!");
+      setMessageType("success");
       setSelectedDates([]); // Clear the calendar
-      
-      // Refresh the list of booked dates
-      fetchAvailability(); 
 
+      // Refresh the list of booked dates
+      fetchAvailability();
     } catch (error: any) {
       setMessage(error.message);
-      setMessageType('error');
+      setMessageType("error");
     }
   };
 
@@ -106,7 +110,7 @@ export const CarDetails = () => {
     <div className="car-details-container">
       <h2>Book This Car (ID: {id})</h2>
       <p>Select your booking dates:</p>
-      
+
       <Flatpickr
         value={selectedDates}
         options={{
@@ -120,16 +124,12 @@ export const CarDetails = () => {
           setSelectedDates(dates as Date[]);
         }}
       />
-      
+
       <button onClick={handleBooking} className="book-button">
         Book Now
       </button>
 
-      {message && (
-        <div className={`message ${messageType}`}>
-          {message}
-        </div>
-      )}
+      {message && <div className={`message ${messageType}`}>{message}</div>}
     </div>
   );
 };

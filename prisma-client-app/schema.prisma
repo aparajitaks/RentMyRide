@@ -1,0 +1,333 @@
+// Prisma schema for RentMyRide car rental application
+// Connected to Neon PostgreSQL database
+// This schema is separate from the login/signup schema
+
+generator client {
+  provider = "prisma-client-js"
+  output   = "../prisma-client-app"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL_APP")
+}
+
+// Enums
+enum UserRole {
+  OWNER
+  CUSTOMER
+  ADMIN
+}
+
+enum BookingStatus {
+  PENDING
+  CONFIRMED
+  ACTIVE
+  COMPLETED
+  CANCELLED
+}
+
+enum PaymentStatus {
+  PENDING
+  PROCESSING
+  COMPLETED
+  FAILED
+  REFUNDED
+}
+
+enum MessageType {
+  BOOKING_INQUIRY
+  GENERAL
+  SUPPORT
+  SYSTEM
+}
+
+// Models
+model User {
+  id        String   @id @default(uuid())
+  email     String   @unique
+  firstName String?
+  lastName  String?
+  phone     String?
+  role      UserRole @default(CUSTOMER)
+  isActive  Boolean  @default(true)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  // Relations
+  profile          Profile?
+  business         Business?
+  bookings         Booking[]
+  payments         Payment[]
+  sentMessages     Message[]  @relation("MessageSender")
+  receivedMessages Message[]  @relation("MessageReceiver")
+  reviewsGiven     Review[]   @relation("ReviewAuthor")
+  reviewsReceived  Review[]   @relation("ReviewReceiver")
+  documents        Document[]
+  vehicles         Vehicle[]
+
+  @@index([email])
+  @@index([role])
+  @@index([isActive])
+  @@map("users")
+}
+
+model Profile {
+  id        String   @id @default(uuid())
+  avatar    String?
+  bio       String?
+  address   String?
+  city      String?
+  state     String?
+  zipCode   String?
+  country   String?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  // Relations
+  userId String @unique
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+  @@map("profiles")
+}
+
+model Business {
+  id          String   @id @default(uuid())
+  name        String
+  description String?
+  address     String?
+  city        String?
+  state       String?
+  zipCode     String?
+  country     String?
+  phone       String?
+  website     String?
+  logo        String?
+  isVerified  Boolean  @default(false)
+  isActive    Boolean  @default(true)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  // Relations
+  ownerId   String     @unique
+  owner     User       @relation(fields: [ownerId], references: [id], onDelete: Cascade)
+  vehicles  Vehicle[]
+  documents Document[]
+
+  @@index([ownerId])
+  @@index([city])
+  @@index([isVerified])
+  @@index([isActive])
+  @@map("businesses")
+}
+
+model Vehicle {
+  id            String   @id @default(uuid())
+  make          String
+  model         String
+  year          Int
+  color         String?
+  licensePlate  String?  @unique
+  vin           String?  @unique
+  mileage       Int?
+  seats         Int      @default(5)
+  transmission  String? // e.g., "Automatic", "Manual"
+  fuelType      String? // e.g., "Gasoline", "Electric", "Hybrid"
+  pricePerDay   Decimal  @db.Decimal(10, 2)
+  pricePerWeek  Decimal? @db.Decimal(10, 2)
+  pricePerMonth Decimal? @db.Decimal(10, 2)
+  description   String?
+  features      String? // JSON string or comma-separated
+  isAvailable   Boolean  @default(true)
+  isActive      Boolean  @default(true)
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+
+  // Relations
+  businessId String
+  business   Business       @relation(fields: [businessId], references: [id], onDelete: Cascade)
+  ownerId    String?
+  owner      User?          @relation(fields: [ownerId], references: [id], onDelete: Cascade)
+  photos     VehiclePhoto[]
+  bookings   Booking[]
+  reviews    Review[]
+
+  @@index([businessId])
+  @@index([ownerId])
+  @@index([isAvailable])
+  @@index([isActive])
+  @@index([make, model])
+  @@map("vehicles")
+}
+
+model VehiclePhoto {
+  id        String   @id @default(uuid())
+  url       String
+  caption   String?
+  isPrimary Boolean  @default(false)
+  createdAt DateTime @default(now())
+
+  // Relations
+  vehicleId String
+  vehicle   Vehicle @relation(fields: [vehicleId], references: [id], onDelete: Cascade)
+
+  @@index([vehicleId])
+  @@index([isPrimary])
+  @@map("vehicle_photos")
+}
+
+model Booking {
+  id              String        @id @default(uuid())
+  startDate       DateTime
+  endDate         DateTime
+  totalDays       Int
+  totalPrice      Decimal       @db.Decimal(10, 2)
+  status          BookingStatus @default(PENDING)
+  pickupLocation  String?
+  dropoffLocation String?
+  specialRequests String?
+  createdAt       DateTime      @default(now())
+  updatedAt       DateTime      @updatedAt
+
+  // Relations
+  userId    String
+  user      User       @relation(fields: [userId], references: [id], onDelete: Cascade)
+  vehicleId String
+  vehicle   Vehicle    @relation(fields: [vehicleId], references: [id], onDelete: Cascade)
+  payment   Payment?
+  travelLog TravelLog?
+
+  @@index([userId])
+  @@index([vehicleId])
+  @@index([status])
+  @@index([vehicleId, startDate, endDate])
+  @@map("bookings")
+}
+
+model Payment {
+  id            String        @id @default(uuid())
+  amount        Decimal       @db.Decimal(10, 2)
+  currency      String        @default("USD")
+  status        PaymentStatus @default(PENDING)
+  method        String // e.g., "CREDIT_CARD", "DEBIT_CARD", "PAYPAL"
+  transactionId String?       @unique
+  receiptUrl    String?
+  processedAt   DateTime?
+  createdAt     DateTime      @default(now())
+  updatedAt     DateTime      @updatedAt
+
+  // Relations
+  bookingId String  @unique
+  booking   Booking @relation(fields: [bookingId], references: [id], onDelete: Cascade)
+  userId    String
+  user      User    @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([bookingId])
+  @@index([userId])
+  @@index([status])
+  @@index([transactionId])
+  @@map("payments")
+}
+
+model Message {
+  id        String      @id @default(uuid())
+  type      MessageType @default(GENERAL)
+  content   String
+  isRead    Boolean     @default(false)
+  createdAt DateTime    @default(now())
+  updatedAt DateTime    @updatedAt
+
+  // Relations
+  senderId   String
+  sender     User   @relation("MessageSender", fields: [senderId], references: [id], onDelete: Cascade)
+  receiverId String
+  receiver   User   @relation("MessageReceiver", fields: [receiverId], references: [id], onDelete: Cascade)
+
+  @@index([senderId])
+  @@index([receiverId])
+  @@index([isRead])
+  @@index([type])
+  @@index([createdAt])
+  @@map("messages")
+}
+
+model Review {
+  id         String   @id @default(uuid())
+  rating     Int // 1-5 stars
+  comment    String?
+  isVerified Boolean  @default(false)
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+
+  // Relations
+  authorId   String
+  author     User     @relation("ReviewAuthor", fields: [authorId], references: [id], onDelete: Cascade)
+  receiverId String?
+  receiver   User?    @relation("ReviewReceiver", fields: [receiverId], references: [id], onDelete: Cascade)
+  vehicleId  String?
+  vehicle    Vehicle? @relation(fields: [vehicleId], references: [id], onDelete: Cascade)
+
+  @@index([authorId])
+  @@index([receiverId])
+  @@index([vehicleId])
+  @@index([rating])
+  @@map("reviews")
+}
+
+model Document {
+  id          String    @id @default(uuid())
+  type        String // e.g., "DRIVER_LICENSE", "INSURANCE", "REGISTRATION"
+  name        String
+  url         String
+  description String?
+  expiresAt   DateTime?
+  isVerified  Boolean   @default(false)
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+
+  // Relations
+  userId     String?
+  user       User?     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  businessId String?
+  business   Business? @relation(fields: [businessId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+  @@index([businessId])
+  @@index([type])
+  @@index([isVerified])
+  @@map("documents")
+}
+
+model TravelLog {
+  id            String   @id @default(uuid())
+  startMileage  Int?
+  endMileage    Int?
+  startLocation String?
+  endLocation   String?
+  notes         String?
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+
+  // Relations
+  bookingId String        @unique
+  booking   Booking       @relation(fields: [bookingId], references: [id], onDelete: Cascade)
+  photos    TravelPhoto[]
+
+  @@index([bookingId])
+  @@map("travel_logs")
+}
+
+model TravelPhoto {
+  id        String   @id @default(uuid())
+  url       String
+  caption   String?
+  createdAt DateTime @default(now())
+
+  // Relations
+  travelLogId String
+  travelLog   TravelLog @relation(fields: [travelLogId], references: [id], onDelete: Cascade)
+
+  @@index([travelLogId])
+  @@map("travel_photos")
+}

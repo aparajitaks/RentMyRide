@@ -1,0 +1,42 @@
+version: '3.9'
+services:
+  db:
+    image: postgres:16-alpine
+    environment:
+      POSTGRES_USER: app
+      POSTGRES_PASSWORD: app
+      POSTGRES_DB: rentmyride
+    ports:
+      - "5432:5432"
+    volumes:
+      - db-data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD", "pg_isready", "-U", "app"]
+      interval: 5s
+      timeout: 4s
+      retries: 10
+  api:
+    build:
+      context: ..
+      dockerfile: devops/Dockerfile
+    environment:
+      NODE_ENV: production
+      PORT: 5001
+      DATABASE_URL_APP: postgresql://app:app@db:5432/rentmyride
+    depends_on:
+      db:
+        condition: service_healthy
+    ports:
+      - "5001:5001"
+    command: ["node", "backend/src/server.js"]
+  frontend:
+    build:
+      context: ..
+      dockerfile: devops/Dockerfile.frontend
+    depends_on:
+      api:
+        condition: service_started
+    ports:
+      - "80:80"
+volumes:
+  db-data:

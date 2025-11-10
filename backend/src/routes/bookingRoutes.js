@@ -1,14 +1,24 @@
-// server/routes/bookingRoutes.js
-import express from 'express';
-import { createBooking, getCarAvailability } from '../controllers/bookingController.js';
-import { protect } from '../middleware/authMiddleware.js'; // Assuming you have this
+import express from "express";
+import {
+  requestBooking,
+  approveBooking,
+  payBooking,
+  completeBooking,
+  cancelBooking,
+  listMyBookings,
+  listVehicleBookings,
+} from "../controllers/bookingController.js";
 
 const router = express.Router();
+router.use(express.json());
 
-// GET /api/cars/:id/availability (Doesn't need protection, it's public)
-// We'll put this in carRoutes.js to match the URL structure.
-
-// POST /api/bookings (Protected, user must be logged in)
-router.post('/', protect, createBooking);
+// Booking workflow endpoints
+router.post("/request", requestBooking);
+router.post("/:id/approve", approveBooking);
+router.post("/:id/pay", payBooking);
+router.post("/:id/complete", completeBooking);
+router.post("/:id/cancel", cancelBooking);
+router.get("/mine", listMyBookings);
+router.get("/vehicle/:vehicleId", listVehicleBookings);
 
 export default router;
