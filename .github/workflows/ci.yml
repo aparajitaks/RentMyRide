@@ -10,9 +10,20 @@ jobs:
   build-and-test:
     runs-on: ubuntu-latest
     timeout-minutes: 20
-    defaults:
-      run:
-        working-directory: RentMyRide
+    services:
+      postgres:
+        image: postgres:15
+        env:
+          POSTGRES_USER: postgres
+          POSTGRES_PASSWORD: postgres
+          POSTGRES_DB: app
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd "pg_isready -U postgres"
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -23,21 +34,49 @@ jobs:
           node-version: 20
           cache: npm
           cache-dependency-path: |
-            RentMyRide/package-lock.json
-            RentMyRide/backend/package-lock.json
+            package-lock.json
+            backend/package-lock.json
+            frontend/package-lock.json
 
-      - name: Install dependencies
+      - name: Install root dependencies
         run: npm ci
+
+      - name: Install backend dependencies
+        working-directory: backend
+        run: npm ci
+
+      - name: Install PostgreSQL client
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y postgresql-client
+
+      - name: Wait for Postgres
+        run: |
+          for i in {1..30}; do
+            pg_isready -h localhost -p 5432 -U postgres && break
+            echo "Waiting for Postgres..."
+            sleep 2
+          done
 
       - name: Prisma validate
         run: npx prisma validate
+
+      - name: Prisma db push (CI ephemeral DB)
+        env:
+          DATABASE_URL_APP: postgresql://postgres:postgres@localhost:5432/app?schema=public
+        run: npx prisma db push --schema prisma/app.schema.prisma
+
+      - name: Apply raw SQL patches
+        env:
+          DATABASE_URL_APP: postgresql://postgres:postgres@localhost:5432/app?schema=public
+        run: node prisma/apply-patches.js
 
       - name: Lint
         run: npm run lint
 
       - name: Run tests (with coverage)
         env:
-          DATABASE_URL_APP: ${{ secrets.DATABASE_URL_APP }}
+          DATABASE_URL_APP: postgresql://postgres:postgres@localhost:5432/app?schema=public
         run: npm test -- --coverage
 
       - name: Upload coverage report
@@ -45,4 +84,4 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: coverage
-          path: RentMyRide/coverage
+          path: coverage
