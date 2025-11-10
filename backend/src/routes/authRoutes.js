@@ -1,10 +1,9 @@
-// backend/src/routes/authRoutes.js
-import express from 'express';
-import { signupUser, loginUser } from '../controllers/authController.js';
-
+import express from "express";
 const router = express.Router();
 
-router.post('/signup', signupUser);
-router.post('/login', loginUser);
+// Simple health + user echo for tests
+router.get("/health", (req, res) => {
+  res.json({ ok: true, user: req.user || null });
+});
 
-export default router; 
+export default router;

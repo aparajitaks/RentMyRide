@@ -1,0 +1,14 @@
+node_modules
+npm-debug.log
+.vscode
+.git
+.gitignore
+coverage
+# Keep frontend in build context for multi-stage build (Dockerfile copies it)
+# (Removed 'frontend' ignore)
+**/*.test.js
+**/*.test.ts
+**/*.spec.js
+**/*.spec.ts
+Dockerfile
+.devcontainer

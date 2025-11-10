@@ -1,15 +1,15 @@
-import { useAuth } from '../context/AuthContext'
-import { useNavigate } from 'react-router-dom'
-import './Dashboard.css'
+import { useAuth } from "../context/AuthContext";
+import { useNavigate } from "react-router-dom";
+import "./Dashboard.css";
 
 const UserDashboard = () => {
-  const { user, logout } = useAuth()
-  const navigate = useNavigate()
+  const { user, logout } = useAuth();
+  const navigate = useNavigate();
 
   const handleLogout = () => {
-    logout()
-    navigate('/login')
-  }
+    logout();
+    navigate("/login");
+  };
 
   return (
     <div className="dashboard-container">
@@ -33,7 +33,7 @@ const UserDashboard = () => {
             <strong>Role:</strong> {user?.role}
           </div>
           <div className="info-item">
-            <strong>Name:</strong> {user?.name || 'N/A'}
+            <strong>Name:</strong> {user?.name || "N/A"}
           </div>
         </div>
 
@@ -48,8 +48,7 @@ const UserDashboard = () => {
         </div>
       </div>
     </div>
-  )
-}
+  );
+};
 
-export default UserDashboard
-
+export default UserDashboard;

@@ -1,9 +1,9 @@
-import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom'
-import { AuthProvider } from './context/AuthContext'
-import Login from './pages/Login'
-import UserDashboard from './pages/UserDashboard'
-import BusinessDashboard from './pages/BusinessDashboard'
-import ProtectedRoute from './components/ProtectedRoute'
+import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
+import { AuthProvider } from "./context/AuthContext";
+import Login from "./pages/Login";
+import UserDashboard from "./pages/UserDashboard";
+import BusinessDashboard from "./pages/BusinessDashboard";
+import ProtectedRoute from "./components/ProtectedRoute";
 
 function App() {
   return (
@@ -31,8 +31,7 @@ function App() {
         </Routes>
       </BrowserRouter>
     </AuthProvider>
-  )
+  );
 }
 
-export default App
-
+export default App;

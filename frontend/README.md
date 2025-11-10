@@ -1,4 +1,5 @@
 <<<<<<< HEAD
+
 # Getting Started with Create React App
 
 This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
@@ -44,8 +45,8 @@ You don’t have to ever use `eject`. The curated feature set is suitable for sm
 
 You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
 
-To learn React, check out the [React documentation](https://reactjs.org/).
-=======
+# To learn React, check out the [React documentation](https://reactjs.org/).
+
 # RentMyRide Frontend
 
 Vite + React (JavaScript) frontend for the car rental platform.
@@ -53,11 +54,13 @@ Vite + React (JavaScript) frontend for the car rental platform.
 ## Setup
 
 1. Install dependencies:
+
 ```bash
 npm install
 ```
 
 2. Start development server:
+
 ```bash
 npm run dev
 ```
@@ -97,7 +100,9 @@ The frontend expects a backend API at `http://localhost:5000/api/auth` with:
 ## Backend Requirements
 
 Your backend should:
+
 1. Accept POST requests to `/api/auth/login` with:
+
    ```json
    {
      "email": "user@example.com",
@@ -107,6 +112,7 @@ Your backend should:
    ```
 
 2. Return response:
+
    ```json
    {
      "token": "jwt_token_here",
@@ -121,4 +127,4 @@ Your backend should:
 
 3. Accept GET requests to `/api/auth/me` with `Authorization: Bearer <token>` header
 
->>>>>>> cd93b8360c754c3f06b497aa1a89bf214aa0d5de
+> > > > > > > cd93b8360c754c3f06b497aa1a89bf214aa0d5de
