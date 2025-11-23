@@ -1,84 +1,123 @@
-// backend/src/controllers/carController.js
-import { getPrisma, setPrismaForTest as _setPrisma } from "../models/prisma.js";
+import { PrismaClient } from '../../../prisma-client-app/index.js'
 
-// test hook for injecting a mock prisma (delegates to shared model)
-export function __setPrismaForTest(p) {
-  _setPrisma(p);
+const prisma = new PrismaClient()
+
+export const getCarDetails = async (req, res, next) => {
+  try {
+    const { id } = req.params
+
+    const vehicle = await prisma.vehicle.findUnique({
+      where: { id },
+      include: {
+        business: {
+          include: {
+            owner: {
+              select: {
+                firstName: true,
+                lastName: true,
+                email: true
+              }
+            }
+          }
+        },
+        photos: {
+          orderBy: {
+            isPrimary: 'desc'
+          }
+        },
+        reviews: {
+          include: {
+            author: {
+              select: {
+                firstName: true,
+                lastName: true
+              }
+            }
+          },
+          take: 5,
+          orderBy: {
+            createdAt: 'desc'
+          }
+        },
+        bookings: {
+          where: {
+            status: {
+              in: ['CONFIRMED', 'ACTIVE']
+            }
+          },
+          select: {
+            startDate: true,
+            endDate: true
+          }
+        }
+      }
+    })
+
+    if (!vehicle) {
+      return res.status(404).json({ message: 'Vehicle not found' })
+    }
+
+    // Calculate average rating
+    const allReviews = await prisma.review.findMany({
+      where: {
+        vehicleId: id
+      },
+      select: {
+        rating: true
+      }
+    })
+
+    const averageRating = allReviews.length > 0
+      ? allReviews.reduce((sum, r) => sum + r.rating, 0) / allReviews.length
+      : 0
+
+    // Check availability
+    const isAvailable = vehicle.isAvailable && vehicle.bookings.length === 0
+
+    res.json({
+      id: vehicle.id,
+      make: vehicle.make,
+      model: vehicle.model,
+      year: vehicle.year,
+      color: vehicle.color,
+      licensePlate: vehicle.licensePlate,
+      vin: vehicle.vin,
+      mileage: vehicle.mileage,
+      seats: vehicle.seats,
+      transmission: vehicle.transmission,
+      fuelType: vehicle.fuelType,
+      pricePerDay: vehicle.pricePerDay,
+      pricePerWeek: vehicle.pricePerWeek,
+      pricePerMonth: vehicle.pricePerMonth,
+      description: vehicle.description,
+      features: vehicle.features,
+      isAvailable,
+      photos: vehicle.photos.map(p => ({
+        id: p.id,
+        url: p.url,
+        caption: p.caption,
+        isPrimary: p.isPrimary
+      })),
+      business: {
+        id: vehicle.business.id,
+        name: vehicle.business.name,
+        address: vehicle.business.address,
+        city: vehicle.business.city,
+        ownerName: `${vehicle.business.owner.firstName || ''} ${vehicle.business.owner.lastName || ''}`.trim() || vehicle.business.owner.email
+      },
+      rating: parseFloat(averageRating.toFixed(1)),
+      totalReviews: allReviews.length,
+      reviews: vehicle.reviews.map(r => ({
+        id: r.id,
+        rating: r.rating,
+        comment: r.comment,
+        authorName: `${r.author.firstName || ''} ${r.author.lastName || ''}`.trim() || 'Anonymous',
+        createdAt: r.createdAt
+      })),
+      bookings: vehicle.bookings
+    })
+  } catch (error) {
+    next(error)
+  }
 }
 
-// GET /api/cars/:id/availability
-// Return booked date ranges for a car in ISO yyyy-mm-dd form for calendar disabling.
-export const getCarAvailability = async (req, res) => {
-  try {
-    const prisma = getPrisma();
-    const { id } = req.params;
-    const bookings = await prisma.booking.findMany({
-      where: { carId: parseInt(id, 10) },
-      select: { startDate: true, endDate: true },
-    });
-    const ranges = bookings.map(b => ({
-      from: b.startDate.toISOString().split('T')[0],
-      to: b.endDate.toISOString().split('T')[0],
-    }));
-    return res.status(200).json(ranges);
-  } catch (err) {
-    return res.status(500).json({ error: 'Failed to fetch availability', details: err.message });
-  }
-};
-
-// GET /api/cars (Public)
-export const getAllCars = async (req, res) => {
-  try {
-    const prisma = getPrisma();
-    const cars = await prisma.car.findMany();
-    res.status(200).json(cars);
-  } catch (error) {
-    res
-      .status(500)
-      .json({ error: "Failed to fetch cars", details: error.message });
-  }
-};
-
-// GET /api/cars/:id (Public)
-export const getCarById = async (req, res) => {
-  try {
-    const prisma = getPrisma();
-    const { id } = req.params;
-    const car = await prisma.car.findUnique({
-      where: { id: parseInt(id) },
-    });
-    if (!car) {
-      return res.status(404).json({ error: "Car not found" });
-    }
-    res.status(200).json(car);
-  } catch (error) {
-    res
-      .status(500)
-      .json({ error: "Failed to fetch car", details: error.message });
-  }
-};
-
-// POST /api/cars (Protected)
-export const createCar = async (req, res) => {
-  try {
-    const prisma = getPrisma();
-    const { make, model, year, pricePerDay, image } = req.body;
-    const ownerId = req.user.id; // From our 'protect' middleware
-
-    const newCar = await prisma.car.create({
-      data: {
-        make,
-        model,
-        year: parseInt(year),
-        pricePerDay: parseFloat(pricePerDay),
-        image,
-        ownerId: ownerId,
-      },
-    });
-    res.status(201).json(newCar);
-  } catch (error) {
-    res
-      .status(500)
-      .json({ error: "Failed to create car", details: error.message });
-  }
-};

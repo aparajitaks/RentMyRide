@@ -1,9 +1,11 @@
-import express from "express";
-const router = express.Router();
+import express from 'express'
+import { login, getMe } from '../controllers/authController.js'
+import { authenticate } from '../middleware/authMiddleware.js'
 
-// Simple health + user echo for tests
-router.get("/health", (req, res) => {
-  res.json({ ok: true, user: req.user || null });
-});
+const router = express.Router()
 
-export default router;
+router.post('/login', login)
+router.get('/me', authenticate, getMe)
+
+export default router
+

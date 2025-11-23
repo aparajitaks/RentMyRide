@@ -1,24 +1,16 @@
-import express from "express";
+import express from 'express'
+import { authenticate } from '../middleware/authMiddleware.js'
 import {
-  requestBooking,
-  approveBooking,
-  payBooking,
-  completeBooking,
-  cancelBooking,
-  listMyBookings,
-  listVehicleBookings,
-} from "../controllers/bookingController.js";
+  createBookingRequest,
+  getBookingDetails,
+  processPayment
+} from '../controllers/bookingController.js'
 
-const router = express.Router();
-router.use(express.json());
+const router = express.Router()
 
-// Booking workflow endpoints
-router.post("/request", requestBooking);
-router.post("/:id/approve", approveBooking);
-router.post("/:id/pay", payBooking);
-router.post("/:id/complete", completeBooking);
-router.post("/:id/cancel", cancelBooking);
-router.get("/mine", listMyBookings);
-router.get("/vehicle/:vehicleId", listVehicleBookings);
+router.post('/request', authenticate, createBookingRequest)
+router.get('/:id', authenticate, getBookingDetails)
+router.post('/:id/payment', authenticate, processPayment)
 
-export default router;
+export default router
+
