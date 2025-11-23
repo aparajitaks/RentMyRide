@@ -1,0 +1,214 @@
+.owner-vehicle-management {
+  padding: 2rem;
+  max-width: 1400px;
+  margin: 0 auto;
+}
+
+.management-container h1 {
+  color: #2c3e50;
+  margin-bottom: 2rem;
+}
+
+.management-content {
+  display: grid;
+  grid-template-columns: 300px 1fr;
+  gap: 2rem;
+}
+
+.vehicles-sidebar {
+  background: white;
+  padding: 1.5rem;
+  border-radius: 10px;
+  box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+}
+
+.vehicles-sidebar h2 {
+  color: #2c3e50;
+  margin-bottom: 1rem;
+}
+
+.no-vehicles {
+  color: #666;
+  text-align: center;
+  padding: 2rem;
+}
+
+.vehicles-list {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.vehicle-item {
+  padding: 1rem;
+  border: 1px solid #eee;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: all 0.3s;
+}
+
+.vehicle-item:hover {
+  background: #f8f9fa;
+}
+
+.vehicle-item.selected {
+  background: #e7f3ff;
+  border-color: #667eea;
+}
+
+.vehicle-item strong {
+  color: #2c3e50;
+  display: block;
+  margin-bottom: 0.25rem;
+}
+
+.vehicle-item p {
+  color: #666;
+  font-size: 0.9rem;
+}
+
+.vehicle-details {
+  background: white;
+  padding: 2rem;
+  border-radius: 10px;
+  box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+}
+
+.vehicle-details h2 {
+  color: #2c3e50;
+  margin-bottom: 2rem;
+}
+
+.documents-section,
+.reminders-section {
+  margin-bottom: 2rem;
+}
+
+.documents-section h3,
+.reminders-section h3 {
+  color: #2c3e50;
+  margin-bottom: 1rem;
+}
+
+.documents-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+  gap: 1rem;
+}
+
+.document-card {
+  padding: 1.5rem;
+  border: 1px solid #eee;
+  border-radius: 5px;
+  text-align: center;
+}
+
+.document-card h4 {
+  color: #2c3e50;
+  margin-bottom: 1rem;
+}
+
+.document-info {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.document-info p {
+  color: #666;
+  font-size: 0.9rem;
+}
+
+.view-document {
+  color: #667eea;
+  text-decoration: none;
+  font-weight: 600;
+}
+
+.view-document:hover {
+  text-decoration: underline;
+}
+
+.upload-document {
+  display: inline-block;
+  padding: 0.75rem 1.5rem;
+  background: #667eea;
+  color: white;
+  border-radius: 5px;
+  cursor: pointer;
+  font-weight: 600;
+  transition: background 0.3s;
+}
+
+.upload-document:hover {
+  background: #5568d3;
+}
+
+.no-reminders {
+  color: #666;
+  text-align: center;
+  padding: 2rem;
+}
+
+.reminders-list {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.reminder-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: start;
+  padding: 1rem;
+  border: 1px solid #eee;
+  border-radius: 5px;
+}
+
+.reminder-info {
+  flex: 1;
+}
+
+.reminder-info strong {
+  color: #2c3e50;
+  display: block;
+  margin-bottom: 0.5rem;
+}
+
+.reminder-info p {
+  color: #666;
+  font-size: 0.9rem;
+  margin: 0.25rem 0;
+}
+
+.reminder-date {
+  color: #999;
+  font-size: 0.85rem;
+}
+
+.reminder-status {
+  padding: 0.5rem 1rem;
+  border-radius: 15px;
+  font-size: 0.85rem;
+  font-weight: 600;
+}
+
+.reminder-status.pending {
+  background: #fff3cd;
+  color: #856404;
+}
+
+.reminder-status.completed {
+  background: #d4edda;
+  color: #155724;
+}
+
+@media (max-width: 1024px) {
+  .management-content {
+    grid-template-columns: 1fr;
+  }
+}
+
+
+
+

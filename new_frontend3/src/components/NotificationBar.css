@@ -1,0 +1,28 @@
+.notification-bar {
+  background-color: #fff3cd;
+  border-bottom: 2px solid #ffc107;
+  padding: 1rem 2rem;
+}
+
+.notification-bar-content h3 {
+  margin-bottom: 0.5rem;
+  color: #856404;
+}
+
+.notification-bar-content ul {
+  list-style: none;
+}
+
+.notification-bar-content li {
+  padding: 0.5rem 0;
+  color: #856404;
+}
+
+.notification-bar-content li.high {
+  font-weight: bold;
+  color: #d9534f;
+}
+
+
+
+

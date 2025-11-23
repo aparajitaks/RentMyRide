@@ -1,0 +1,125 @@
+.owner-calendar {
+  padding: 2rem;
+  max-width: 1400px;
+  margin: 0 auto;
+}
+
+.calendar-container h1 {
+  color: #2c3e50;
+  margin-bottom: 2rem;
+}
+
+.calendar-content {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 2rem;
+}
+
+.calendar-wrapper {
+  background: white;
+  padding: 2rem;
+  border-radius: 10px;
+  box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+}
+
+.bookings-panel {
+  background: white;
+  padding: 2rem;
+  border-radius: 10px;
+  box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+}
+
+.bookings-panel h2 {
+  color: #2c3e50;
+  margin-bottom: 1.5rem;
+}
+
+.no-bookings {
+  color: #666;
+  text-align: center;
+  padding: 2rem;
+}
+
+.bookings-list {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.booking-item {
+  padding: 1rem;
+  border: 1px solid #eee;
+  border-radius: 5px;
+}
+
+.booking-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 0.5rem;
+}
+
+.booking-header strong {
+  color: #2c3e50;
+}
+
+.status-badge {
+  padding: 0.25rem 0.75rem;
+  border-radius: 15px;
+  font-size: 0.8rem;
+  font-weight: 600;
+}
+
+.status-badge.pending {
+  background: #fff3cd;
+  color: #856404;
+}
+
+.status-badge.approved {
+  background: #d1ecf1;
+  color: #0c5460;
+}
+
+.status-badge.active {
+  background: #d4edda;
+  color: #155724;
+}
+
+.customer-name,
+.booking-dates,
+.booking-total {
+  color: #666;
+  font-size: 0.9rem;
+  margin: 0.25rem 0;
+}
+
+.booking-total {
+  font-weight: 600;
+  color: #667eea;
+}
+
+/* Calendar tile styling */
+.react-calendar {
+  width: 100%;
+  border: none;
+  font-family: inherit;
+}
+
+.react-calendar__tile.has-booking {
+  background: #667eea;
+  color: white;
+}
+
+.react-calendar__tile.has-booking:hover {
+  background: #5568d3;
+}
+
+@media (max-width: 1024px) {
+  .calendar-content {
+    grid-template-columns: 1fr;
+  }
+}
+
+
+
+
