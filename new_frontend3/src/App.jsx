@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react'
 import api from './utils/api'
 import LoginPage from './pages/LoginPage'
+import SignupPage from './pages/SignupPage'
 import TermsPage from './pages/TermsPage'
 import CustomerLayout from './layouts/CustomerLayout'
 import OwnerLayout from './layouts/OwnerLayout'
@@ -14,12 +15,14 @@ import BookingHistoryPage from './pages/customer/BookingHistoryPage'
 import OwnerDashboard from './pages/owner/OwnerDashboard'
 import OwnerProfile from './pages/owner/OwnerProfile'
 import OwnerCalendar from './pages/owner/OwnerCalendar'
+import OwnerAddCar from './pages/owner/OwnerAddCar'
+import OwnerEditCar from './pages/owner/OwnerEditCar'
 import OwnerCarsList from './pages/owner/OwnerCarsList'
 import OwnerVehicleManagement from './pages/owner/OwnerVehicleManagement'
 import ComplaintPage from './pages/ComplaintPage'
 import './App.css'
 
-// Navigation utility - using location directly (global, not window.location)
+
 export const navigateTo = (path) => {
   location.hash = path
 }
@@ -38,34 +41,40 @@ function AppRoutes({ user, loading, login, logout, updateUser }) {
       const fullPath = getCurrentPath()
       const pathWithoutQuery = fullPath.split('?')[0]
       setCurrentPath(pathWithoutQuery)
-      
+
       const parts = pathWithoutQuery.split('/').filter(p => p)
+
       
-      // Extract params from path
       const newParams = {}
+
       
-      // Handle /customer/business/:id
       const businessIndex = parts.indexOf('business')
       if (businessIndex !== -1 && parts[businessIndex + 1]) {
         newParams.id = parts[businessIndex + 1]
       }
+
       
-      // Handle /customer/booking/:businessId/:carId
       const bookingIndex = parts.indexOf('booking')
       if (bookingIndex !== -1 && parts[bookingIndex + 1] && parts[bookingIndex + 2]) {
         newParams.businessId = parts[bookingIndex + 1]
         newParams.carId = parts[bookingIndex + 2]
       }
+
       
+      const carsIndex = parts.indexOf('cars')
+      if (carsIndex !== -1 && parts[carsIndex + 1] && parts[carsIndex + 2] === 'edit') {
+        newParams.carId = parts[carsIndex + 1]
+      }
+
       setParams(newParams)
     }
 
-    // Listen to hashchange events for navigation
+    
     const handleHashChange = () => updatePathAndParams()
 
     addEventListener('hashchange', handleHashChange)
     updatePathAndParams()
-    
+
     return () => {
       removeEventListener('hashchange', handleHashChange)
     }
@@ -73,12 +82,16 @@ function AppRoutes({ user, loading, login, logout, updateUser }) {
 
   useEffect(() => {
     if (!loading) {
-      if (!user && currentPath !== '/login' && currentPath !== '/terms') {
+      if (!user && currentPath !== '/login' && currentPath !== '/signup' && currentPath !== '/terms') {
         navigateTo('/login')
-      } else if (user && currentPath === '/login') {
+      } else if (user && (currentPath === '/login' || currentPath === '/signup')) {
         navigateTo(user.userType === 'customer' ? '/customer' : '/owner')
       } else if (user && (currentPath === '/' || !currentPath)) {
         navigateTo(user.userType === 'customer' ? '/customer' : '/owner')
+      } else if (user && user.userType !== 'customer' && user.userType !== 'owner') {
+        
+        logout()
+        navigateTo('/login')
       }
     }
   }, [user, loading, currentPath])
@@ -87,23 +100,27 @@ function AppRoutes({ user, loading, login, logout, updateUser }) {
     return <div className="loading">Loading...</div>
   }
 
-  if (!user && currentPath !== '/login' && currentPath !== '/terms') {
-    return null
+  if (!user && currentPath !== '/login' && currentPath !== '/signup' && currentPath !== '/terms') {
+    return <LoginPage login={login} />
   }
 
-  // Render pages based on path
+  
   if (currentPath === '/login') {
     return <LoginPage login={login} />
+  }
+
+  if (currentPath === '/signup') {
+    return <SignupPage />
   }
 
   if (currentPath === '/terms') {
     return <TermsPage />
   }
 
-  // Customer routes
+  
   if (user && user.userType === 'customer') {
     let customerPage = null
-    
+
     if (currentPath === '/customer' || currentPath === '/customer/') {
       customerPage = <CustomerHome user={user} />
     } else if (currentPath === '/customer/profile') {
@@ -127,10 +144,10 @@ function AppRoutes({ user, loading, login, logout, updateUser }) {
     return <CustomerLayout user={user} logout={logout}>{customerPage}</CustomerLayout>
   }
 
-  // Owner routes
+  
   if (user && user.userType === 'owner') {
     let ownerPage = null
-    
+
     if (currentPath === '/owner' || currentPath === '/owner/') {
       ownerPage = <OwnerDashboard />
     } else if (currentPath === '/owner/profile') {
@@ -139,6 +156,10 @@ function AppRoutes({ user, loading, login, logout, updateUser }) {
       ownerPage = <OwnerCalendar />
     } else if (currentPath === '/owner/cars') {
       ownerPage = <OwnerCarsList />
+    } else if (currentPath === '/owner/cars/new') {
+      ownerPage = <OwnerAddCar />
+    } else if (currentPath.startsWith('/owner/cars/') && currentPath.endsWith('/edit') && params.carId) {
+      ownerPage = <OwnerEditCar carId={params.carId} />
     } else if (currentPath === '/owner/vehicles') {
       ownerPage = <OwnerVehicleManagement />
     } else if (currentPath === '/owner/complaints') {
@@ -150,7 +171,29 @@ function AppRoutes({ user, loading, login, logout, updateUser }) {
     return <OwnerLayout user={user} logout={logout}>{ownerPage}</OwnerLayout>
   }
 
-  return null
+  return (
+    <div className="error-container" style={{ padding: '50px', textAlign: 'center' }}>
+      <h2>Something went wrong</h2>
+      <p>We couldn't determine your account type. Please try logging in again.</p>
+      <button
+        onClick={() => {
+          logout()
+          navigateTo('/login')
+        }}
+        style={{
+          padding: '10px 20px',
+          backgroundColor: '#ff4444',
+          color: 'white',
+          border: 'none',
+          borderRadius: '5px',
+          cursor: 'pointer',
+          marginTop: '20px'
+        }}
+      >
+        Logout & Reset
+      </button>
+    </div>
+  )
 }
 
 function App() {
@@ -223,12 +266,12 @@ function App() {
   }
 
   return (
-    <AppRoutes 
-      user={user} 
-      loading={loading} 
-      login={login} 
-      logout={logout} 
-      updateUser={updateUser} 
+    <AppRoutes
+      user={user}
+      loading={loading}
+      login={login}
+      logout={logout}
+      updateUser={updateUser}
     />
   )
 }

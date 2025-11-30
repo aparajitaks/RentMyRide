@@ -6,7 +6,7 @@ function ComplaintPage({ user }) {
   const [complaints, setComplaints] = useState([])
   const [showForm, setShowForm] = useState(false)
   const [formData, setFormData] = useState({
-    type: '', // 'customer' or 'owner'
+    type: '', 
     targetId: '',
     bookingId: '',
     title: '',
@@ -64,7 +64,7 @@ function ComplaintPage({ user }) {
   const handleSubmit = async (e) => {
     e.preventDefault()
     
-    // Check if booking is within 5 days
+    
     const selectedBooking = bookings.find(b => b.id === formData.bookingId)
     if (selectedBooking) {
       const completedDate = new Date(selectedBooking.completedAt || selectedBooking.endDate)

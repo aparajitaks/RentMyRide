@@ -6,7 +6,7 @@ import './BookingHistoryPage.css'
 function BookingHistoryPage() {
   const [bookings, setBookings] = useState([])
   const [loading, setLoading] = useState(true)
-  const [filter, setFilter] = useState('all') // all, pending, active, completed
+  const [filter, setFilter] = useState('all') 
 
   useEffect(() => {
     fetchBookings()
@@ -27,7 +27,7 @@ function BookingHistoryPage() {
   const getStatusBadge = (status) => {
     const badges = {
       pending: { class: 'pending', text: 'Pending Approval' },
-      approved: { class: 'approved', text: 'Approved - Payment Required' },
+      confirmed: { class: 'approved', text: 'Approved - Payment Required' },
       active: { class: 'active', text: 'Active Rental' },
       completed: { class: 'completed', text: 'Completed' },
       cancelled: { class: 'cancelled', text: 'Cancelled' }
@@ -105,12 +105,12 @@ function BookingHistoryPage() {
                     <strong>Dates:</strong> {new Date(booking.startDate).toLocaleDateString()} - {new Date(booking.endDate).toLocaleDateString()}
                   </div>
                   <div className="detail-item">
-                    <strong>Total:</strong> ${booking.totalAmount}
+                    <strong>Total:</strong> ₹{booking.totalAmount}
                   </div>
                 </div>
 
                 <div className="booking-actions">
-                  {booking.status === 'approved' && (
+                  {booking.status === 'confirmed' && (
                     <button
                       onClick={() => handlePayment(booking.id)}
                       className="payment-button"

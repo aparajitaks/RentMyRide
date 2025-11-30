@@ -40,11 +40,28 @@ function CustomerProfile({ user, updateUser }) {
     setMessage('')
 
     try {
-      const response = await api.put('/customer/profile', profile)
-      updateUser(response.data)
+      console.log('Submitting profile update...', profile)
+      const nameParts = profile.name.split(' ')
+      const firstName = nameParts[0]
+      const lastName = nameParts.slice(1).join(' ') || ''
+
+      const payload = {
+        ...profile,
+        firstName,
+        lastName
+      }
+      console.log('Payload:', payload)
+
+      const response = await api.put('/customer/profile', payload)
+      console.log('Update response:', response.data)
+
+      
+      const updatedUser = { ...response.data, token: user.token }
+      updateUser(updatedUser)
       setMessage('Profile updated successfully!')
     } catch (error) {
-      setMessage('Failed to update profile')
+      console.error('Profile update failed:', error)
+      setMessage('Failed to update profile: ' + (error.response?.data?.message || error.message))
     } finally {
       setLoading(false)
     }
@@ -54,7 +71,7 @@ function CustomerProfile({ user, updateUser }) {
     <div className="customer-profile">
       <div className="profile-container">
         <h1>My Profile</h1>
-        
+
         <form onSubmit={handleSubmit} className="profile-form">
           <div className="form-row">
             <div className="form-group">
@@ -67,7 +84,7 @@ function CustomerProfile({ user, updateUser }) {
                 required
               />
             </div>
-            
+
             <div className="form-group">
               <label>Email</label>
               <input
@@ -91,7 +108,7 @@ function CustomerProfile({ user, updateUser }) {
                 onChange={handleChange}
               />
             </div>
-            
+
             <div className="form-group">
               <label>Date of Birth</label>
               <input

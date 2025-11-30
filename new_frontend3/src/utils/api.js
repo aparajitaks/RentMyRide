@@ -1,19 +1,19 @@
 const baseURL = '/api'
 
-// Helper function to build request options
+
 const buildRequestOptions = (method, body, customHeaders = {}) => {
   const token = localStorage.getItem('token')
   const isFormData = body instanceof FormData
   const headers = {}
   
-  // Copy custom headers, but exclude Content-Type for FormData
+  
   for (const [key, value] of Object.entries(customHeaders)) {
     if (!(isFormData && key.toLowerCase() === 'content-type')) {
       headers[key] = value
     }
   }
   
-  // Only add Content-Type if not FormData
+  
   if (!isFormData && !headers['Content-Type']) {
     headers['Content-Type'] = 'application/json'
   }
@@ -38,7 +38,7 @@ const buildRequestOptions = (method, body, customHeaders = {}) => {
   return options
 }
 
-// Helper function to handle response
+
 const handleResponse = async (response) => {
   if (response.status === 401) {
     localStorage.removeItem('token')
@@ -65,7 +65,7 @@ const handleResponse = async (response) => {
   return { data: await response.text() }
 }
 
-// API object with methods similar to axios
+
 const api = {
   get: async (url, config = {}) => {
     const fullUrl = baseURL + url

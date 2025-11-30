@@ -6,7 +6,7 @@ import './OwnerCarsList.css'
 function OwnerCarsList() {
   const [cars, setCars] = useState([])
   const [loading, setLoading] = useState(true)
-  const [filter, setFilter] = useState('all') // all, available, booked
+  const [filter, setFilter] = useState('all') 
 
   useEffect(() => {
     fetchCars()
@@ -96,7 +96,7 @@ function OwnerCarsList() {
                     <span className={`status-badge ${car.status}`}>
                       {car.status}
                     </span>
-                    <span className="car-price">${car.pricePerDay}/day</span>
+                    <span className="car-price">₹{car.pricePerDay}/day</span>
                   </div>
                   <div className="car-actions">
                     <a href={`/owner/cars/${car.id}/edit`} onClick={(e) => { e.preventDefault(); navigateTo(`/owner/cars/${car.id}/edit`); }} className="edit-button">

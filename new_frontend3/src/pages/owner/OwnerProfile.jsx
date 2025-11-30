@@ -4,12 +4,14 @@ import './OwnerProfile.css'
 
 function OwnerProfile({ user, updateUser }) {
   const [profile, setProfile] = useState({
-    name: user?.name || '',
+    firstName: user?.firstName || '',
+    lastName: user?.lastName || '',
     email: user?.email || '',
-    phone: '',
-    businessName: '',
-    address: '',
-    licenseNumber: ''
+    phone: user?.phone || '',
+    businessName: user?.business?.name || '',
+    address: user?.profile?.address || '',
+    city: user?.profile?.city || '',
+    bio: user?.profile?.bio || ''
   })
   const [stats, setStats] = useState({
     totalReviews: 0,
@@ -27,7 +29,17 @@ function OwnerProfile({ user, updateUser }) {
   const fetchProfile = async () => {
     try {
       const response = await api.get('/owner/profile')
-      setProfile(response.data)
+      const data = response.data
+      setProfile({
+        firstName: data.firstName || '',
+        lastName: data.lastName || '',
+        email: data.email || '',
+        phone: data.phone || '',
+        businessName: data.business?.name || '',
+        address: data.profile?.address || '',
+        city: data.profile?.city || '',
+        bio: data.profile?.bio || ''
+      })
     } catch (error) {
       console.error('Failed to fetch profile:', error)
     }
@@ -55,10 +67,21 @@ function OwnerProfile({ user, updateUser }) {
     setMessage('')
 
     try {
-      const response = await api.put('/owner/profile', profile)
+      const payload = {
+        firstName: profile.firstName,
+        lastName: profile.lastName,
+        phone: profile.phone,
+        businessName: profile.businessName,
+        address: profile.address,
+        city: profile.city,
+        bio: profile.bio
+      }
+
+      const response = await api.put('/owner/profile', payload)
       updateUser(response.data)
       setMessage('Profile updated successfully!')
     } catch (error) {
+      console.error('Update error:', error)
       setMessage('Failed to update profile')
     } finally {
       setLoading(false)
@@ -77,7 +100,7 @@ function OwnerProfile({ user, updateUser }) {
           </div>
           <div className="stat-item">
             <h3>Average Rating</h3>
-            <p>{stats.averageRating.toFixed(1)} ⭐</p>
+            <p>{stats.averageRating ? stats.averageRating.toFixed(1) : '0.0'} ⭐</p>
           </div>
           <div className="stat-item">
             <h3>Total Bookings</h3>
@@ -88,16 +111,28 @@ function OwnerProfile({ user, updateUser }) {
         <form onSubmit={handleSubmit} className="profile-form">
           <div className="form-row">
             <div className="form-group">
-              <label>Full Name</label>
+              <label>First Name</label>
               <input
                 type="text"
-                name="name"
-                value={profile.name}
+                name="firstName"
+                value={profile.firstName}
                 onChange={handleChange}
                 required
               />
             </div>
-            
+            <div className="form-group">
+              <label>Last Name</label>
+              <input
+                type="text"
+                name="lastName"
+                value={profile.lastName}
+                onChange={handleChange}
+                required
+              />
+            </div>
+          </div>
+
+          <div className="form-row">
             <div className="form-group">
               <label>Email</label>
               <input
@@ -109,9 +144,6 @@ function OwnerProfile({ user, updateUser }) {
                 disabled
               />
             </div>
-          </div>
-
-          <div className="form-row">
             <div className="form-group">
               <label>Phone Number</label>
               <input
@@ -121,17 +153,17 @@ function OwnerProfile({ user, updateUser }) {
                 onChange={handleChange}
               />
             </div>
-            
-            <div className="form-group">
-              <label>Business Name</label>
-              <input
-                type="text"
-                name="businessName"
-                value={profile.businessName}
-                onChange={handleChange}
-                required
-              />
-            </div>
+          </div>
+
+          <div className="form-group">
+            <label>Business Name</label>
+            <input
+              type="text"
+              name="businessName"
+              value={profile.businessName}
+              onChange={handleChange}
+              required
+            />
           </div>
 
           <div className="form-group">
@@ -145,12 +177,24 @@ function OwnerProfile({ user, updateUser }) {
           </div>
 
           <div className="form-group">
-            <label>License Number</label>
+            <label>City</label>
             <input
               type="text"
-              name="licenseNumber"
-              value={profile.licenseNumber}
+              name="city"
+              value={profile.city}
               onChange={handleChange}
+              placeholder="e.g. New York"
+            />
+          </div>
+
+          <div className="form-group">
+            <label>Bio</label>
+            <textarea
+              name="bio"
+              value={profile.bio}
+              onChange={handleChange}
+              rows="3"
+              placeholder="Tell us about yourself and your business..."
             />
           </div>
 

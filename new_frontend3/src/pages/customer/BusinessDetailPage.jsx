@@ -106,7 +106,7 @@ function BusinessDetailPage({ businessId }) {
                         <span>Transmission: {car.transmission}</span>
                       </div>
                       <div className="car-price">
-                        <span className="price">${car.pricePerDay}/day</span>
+                        <span className="price">₹{car.pricePerDay}/day</span>
                       </div>
                       <button
                         onClick={() => navigateTo(`/customer/booking/${id}/${car.id}`)}

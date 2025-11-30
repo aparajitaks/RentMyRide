@@ -10,20 +10,20 @@ function BusinessListPage() {
 
   useEffect(() => {
     const extractCityAndFetch = () => {
-      // Extract city from URL hash
+      
       const hash = location.hash.slice(1)
       const urlParams = new URLSearchParams(hash.split('?')[1] || '')
       const cityParam = urlParams.get('city') || ''
       setCity(cityParam)
-      
+
       if (cityParam) {
         fetchBusinesses(cityParam)
       }
     }
-    
+
     extractCityAndFetch()
+
     
-    // Listen for hash changes to update when query params change
     const handleHashChange = () => extractCityAndFetch()
     addEventListener('hashchange', handleHashChange)
     return () => removeEventListener('hashchange', handleHashChange)
@@ -77,7 +77,7 @@ function BusinessListPage() {
     <div className="business-list-page">
       <div className="business-list-container">
         <h1>Businesses in {city}</h1>
-        
+
         {businesses.length === 0 ? (
           <div className="no-results">
             <p>No businesses found in {city}</p>
@@ -97,7 +97,7 @@ function BusinessListPage() {
                   <h2>{business.name}</h2>
                   <span className="price-range">{getPriceRange(business.priceRange)}</span>
                 </div>
-                
+
                 <div className="business-info">
                   <p className="owner-name">Owner: {business.ownerName}</p>
                   <div className="rating">

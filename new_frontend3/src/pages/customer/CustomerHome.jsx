@@ -13,18 +13,18 @@ function CustomerHome({ user }) {
     <div className="customer-home">
       <div className="home-container">
         <h1>Welcome, {user?.name || 'Customer'}!</h1>
-        
+
         <div className="home-actions">
           <a href="/customer/search" onClick={(e) => handleLinkClick(e, '/customer/search')} className="action-card search-card">
             <h2>Search for Cars</h2>
             <p>Find available cars in your city</p>
           </a>
-          
+
           <a href="/customer/history" onClick={(e) => handleLinkClick(e, '/customer/history')} className="action-card history-card">
             <h2>Booking History</h2>
             <p>View your past and current bookings</p>
           </a>
-          
+
           <a href="/customer/profile" onClick={(e) => handleLinkClick(e, '/customer/profile')} className="action-card profile-card">
             <h2>Profile</h2>
             <p>Manage your account settings</p>

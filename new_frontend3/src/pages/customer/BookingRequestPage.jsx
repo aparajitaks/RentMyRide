@@ -29,7 +29,7 @@ function BookingRequestPage({ businessId, carId, user }) {
       ])
       setCar(carRes.data)
       setProfile(profileRes.data)
-      // Auto-fill from profile
+      
       if (profileRes.data.address) {
         setFormData(prev => ({
           ...prev,
@@ -78,10 +78,10 @@ function BookingRequestPage({ businessId, carId, user }) {
         ...formData,
         customerId: user.id
       }
-      
+
       const response = await api.post('/bookings/request', bookingData)
       setMessage('Booking request submitted successfully! Waiting for owner approval.')
-      
+
       setTimeout(() => {
         navigateTo('/customer/history')
       }, 2000)
@@ -104,7 +104,7 @@ function BookingRequestPage({ businessId, carId, user }) {
         {car && (
           <div className="car-summary">
             <h2>{car.make} {car.model} ({car.year})</h2>
-            <p>Price: ${car.pricePerDay}/day</p>
+            <p>Price: ₹{car.pricePerDay}/day</p>
           </div>
         )}
 
@@ -120,7 +120,7 @@ function BookingRequestPage({ businessId, carId, user }) {
 
           <div className="form-section">
             <h3>Rental Details</h3>
-            
+
             <div className="form-group">
               <label>Pickup Location *</label>
               <input
@@ -189,11 +189,11 @@ function BookingRequestPage({ businessId, carId, user }) {
             </div>
             <div className="summary-row">
               <span>Price per Day:</span>
-              <span>${car?.pricePerDay || 0}</span>
+              <span>₹{car?.pricePerDay || 0}</span>
             </div>
             <div className="summary-row total">
               <span>Total Amount:</span>
-              <span>${calculateTotal()}</span>
+              <span>₹{calculateTotal()}</span>
             </div>
           </div>
 

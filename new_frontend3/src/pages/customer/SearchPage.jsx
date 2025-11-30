@@ -13,7 +13,7 @@ function SearchPage() {
 
     setLoading(true)
     try {
-      // Navigate to business list with city parameter
+      
       navigateTo(`/customer/businesses?city=${encodeURIComponent(city)}`)
     } catch (error) {
       console.error('Search failed:', error)
@@ -27,7 +27,7 @@ function SearchPage() {
       <div className="search-container">
         <h1>Search for Car Rentals</h1>
         <p className="search-subtitle">Find available cars in your city</p>
-        
+
         <form onSubmit={handleSearch} className="search-form">
           <div className="search-input-group">
             <input

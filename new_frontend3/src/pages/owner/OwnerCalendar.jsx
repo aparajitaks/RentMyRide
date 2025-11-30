@@ -29,9 +29,14 @@ function OwnerCalendar() {
     setSelectedDate(date)
     const dateStr = date.toISOString().split('T')[0]
     const bookingsForDate = bookings.filter(booking => {
-      const start = new Date(booking.startDate).toISOString().split('T')[0]
-      const end = new Date(booking.endDate).toISOString().split('T')[0]
-      return dateStr >= start && dateStr <= end
+      if (!booking.startDate || !booking.endDate) return false
+      try {
+        const start = new Date(booking.startDate).toISOString().split('T')[0]
+        const end = new Date(booking.endDate).toISOString().split('T')[0]
+        return dateStr >= start && dateStr <= end
+      } catch (e) {
+        return false
+      }
     })
     setSelectedBookings(bookingsForDate)
   }
@@ -40,9 +45,14 @@ function OwnerCalendar() {
     if (view === 'month') {
       const dateStr = date.toISOString().split('T')[0]
       const hasBooking = bookings.some(booking => {
-        const start = new Date(booking.startDate).toISOString().split('T')[0]
-        const end = new Date(booking.endDate).toISOString().split('T')[0]
-        return dateStr >= start && dateStr <= end
+        if (!booking.startDate || !booking.endDate) return false
+        try {
+          const start = new Date(booking.startDate).toISOString().split('T')[0]
+          const end = new Date(booking.endDate).toISOString().split('T')[0]
+          return dateStr >= start && dateStr <= end
+        } catch (e) {
+          return false
+        }
       })
       return hasBooking ? 'has-booking' : null
     }
@@ -84,7 +94,7 @@ function OwnerCalendar() {
                     <p className="booking-dates">
                       {new Date(booking.startDate).toLocaleDateString()} - {new Date(booking.endDate).toLocaleDateString()}
                     </p>
-                    <p className="booking-total">Total: ${booking.totalAmount}</p>
+                    <p className="booking-total">Total: ₹{booking.totalAmount}</p>
                   </div>
                 ))}
               </div>

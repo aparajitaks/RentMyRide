@@ -74,11 +74,11 @@ function OwnerDashboard() {
           </div>
           <div className="stat-card">
             <h3>Average Rating</h3>
-            <p className="stat-number">{stats.averageRating.toFixed(1)} ⭐</p>
+            <p className="stat-number">{stats.averageRating ? stats.averageRating.toFixed(1) : '0.0'} ⭐</p>
           </div>
           <div className="stat-card">
             <h3>Total Revenue</h3>
-            <p className="stat-number">${stats.totalRevenue}</p>
+            <p className="stat-number">₹{stats.totalRevenue}</p>
           </div>
         </div>
 
@@ -94,7 +94,7 @@ function OwnerDashboard() {
                   <Tooltip />
                   <Legend />
                   <Line type="monotone" dataKey="bookings" stroke="#667eea" name="Bookings" />
-                  <Line type="monotone" dataKey="revenue" stroke="#28a745" name="Revenue ($)" />
+                  <Line type="monotone" dataKey="revenue" stroke="#28a745" name="Revenue (₹)" />
                 </LineChart>
               </ResponsiveContainer>
             </div>
