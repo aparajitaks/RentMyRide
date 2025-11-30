@@ -1,8 +1,8 @@
-import { PrismaClient } from '../../../prisma-client-app/index.js'
+const { PrismaClient } = require('@prisma/client')
 
 const prisma = new PrismaClient()
 
-export const getProfile = async (req, res, next) => {
+const getProfile = async (req, res, next) => {
   try {
     const userId = req.user.id
 
@@ -39,12 +39,12 @@ export const getProfile = async (req, res, next) => {
   }
 }
 
-export const updateProfile = async (req, res, next) => {
+const updateProfile = async (req, res, next) => {
   try {
     const userId = req.user.id
-    const { firstName, lastName, phone, address, city, state, zipCode, country, bio, avatar } = req.body
+    const { firstName, lastName, phone, address, city, state, zipCode, country, bio, avatar, dateOfBirth, licenseNumber } = req.body
 
-    // Update user
+    
     const user = await prisma.user.update({
       where: { id: userId },
       data: {
@@ -54,7 +54,7 @@ export const updateProfile = async (req, res, next) => {
       }
     })
 
-    // Update or create profile
+    
     await prisma.profile.upsert({
       where: { userId },
       update: {
@@ -64,7 +64,9 @@ export const updateProfile = async (req, res, next) => {
         zipCode,
         country,
         bio,
-        avatar
+        avatar,
+        dateOfBirth,
+        licenseNumber
       },
       create: {
         userId,
@@ -74,7 +76,9 @@ export const updateProfile = async (req, res, next) => {
         zipCode,
         country,
         bio,
-        avatar
+        avatar,
+        dateOfBirth,
+        licenseNumber
       }
     })
 
@@ -98,16 +102,22 @@ export const updateProfile = async (req, res, next) => {
       zipCode: updatedUser.profile?.zipCode,
       country: updatedUser.profile?.country,
       bio: updatedUser.profile?.bio,
-      avatar: updatedUser.profile?.avatar
+      avatar: updatedUser.profile?.avatar,
+      dateOfBirth: updatedUser.profile?.dateOfBirth,
+      licenseNumber: updatedUser.profile?.licenseNumber,
+      userType: updatedUser.role.toLowerCase(),
+      role: updatedUser.role
     }
 
+    console.log('Profile updated successfully:', profile.id)
     res.json(profile)
   } catch (error) {
+    console.error('Error updating customer profile:', error)
     next(error)
   }
 }
 
-export const getBookings = async (req, res, next) => {
+const getBookings = async (req, res, next) => {
   try {
     const userId = req.user.id
     const { status } = req.query
@@ -167,7 +177,7 @@ export const getBookings = async (req, res, next) => {
   }
 }
 
-export const getTravelLog = async (req, res, next) => {
+const getTravelLog = async (req, res, next) => {
   try {
     const userId = req.user.id
 
@@ -220,3 +230,4 @@ export const getTravelLog = async (req, res, next) => {
   }
 }
 
+module.exports = { getProfile, updateProfile, getBookings, getTravelLog }

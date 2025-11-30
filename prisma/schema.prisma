@@ -1,2 +1,0 @@
-// Deprecated: legacy MySQL schema (not used by runtime). Active schema is app.schema.prisma (PostgreSQL).
-// This file is intentionally left blank to avoid accidental use. Safe to delete if MySQL support is dropped.

@@ -1,8 +1,8 @@
-import { PrismaClient } from '../../../prisma-client-app/index.js'
+const { PrismaClient } = require('@prisma/client')
 
 const prisma = new PrismaClient()
 
-export const getCarDetails = async (req, res, next) => {
+const getCarDetails = async (req, res, next) => {
   try {
     const { id } = req.params
 
@@ -57,7 +57,7 @@ export const getCarDetails = async (req, res, next) => {
       return res.status(404).json({ message: 'Vehicle not found' })
     }
 
-    // Calculate average rating
+    
     const allReviews = await prisma.review.findMany({
       where: {
         vehicleId: id
@@ -71,7 +71,7 @@ export const getCarDetails = async (req, res, next) => {
       ? allReviews.reduce((sum, r) => sum + r.rating, 0) / allReviews.length
       : 0
 
-    // Check availability
+    
     const isAvailable = vehicle.isAvailable && vehicle.bookings.length === 0
 
     res.json({
@@ -121,3 +121,4 @@ export const getCarDetails = async (req, res, next) => {
   }
 }
 
+module.exports = { getCarDetails }

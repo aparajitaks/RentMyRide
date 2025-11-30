@@ -1,19 +1,19 @@
-import jwt from 'jsonwebtoken'
-import { PrismaClient } from '../../prisma-client-app/index.js'
+const jwt = require('jsonwebtoken')
+const { PrismaClient } = require('@prisma/client')
 
 const prisma = new PrismaClient()
 
-export const authenticate = async (req, res, next) => {
+const authenticate = async (req, res, next) => {
   try {
     const authHeader = req.headers.authorization
-    
+
     if (!authHeader || !authHeader.startsWith('Bearer ')) {
       return res.status(401).json({ message: 'Authentication required' })
     }
 
     const token = authHeader.substring(7)
     const decoded = jwt.verify(token, process.env.JWT_SECRET || 'your-secret-key')
-    
+
     const user = await prisma.user.findUnique({
       where: { id: decoded.userId },
       include: {
@@ -39,17 +39,18 @@ export const authenticate = async (req, res, next) => {
   }
 }
 
-export const requireRole = (...roles) => {
+const requireRole = (...roles) => {
   return (req, res, next) => {
     if (!req.user) {
       return res.status(401).json({ message: 'Authentication required' })
     }
-    
+
     if (!roles.includes(req.user.role)) {
       return res.status(403).json({ message: 'Insufficient permissions' })
     }
-    
+
     next()
   }
 }
 
+module.exports = { authenticate, requireRole }

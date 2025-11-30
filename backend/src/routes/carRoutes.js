@@ -1,10 +1,10 @@
-import express from 'express'
-import { authenticate } from '../middleware/authMiddleware.js'
-import { getCarDetails } from '../controllers/carController.js'
+const express = require('express')
+const { authenticate } = require('../middleware/authMiddleware.js')
+const { getCarDetails } = require('../controllers/carController.js')
 
 const router = express.Router()
 
 router.get('/:id', authenticate, getCarDetails)
 
-export default router
+module.exports = router
 

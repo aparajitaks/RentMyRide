@@ -1,8 +1,8 @@
-import { PrismaClient } from '../../../prisma-client-app/index.js'
+const { PrismaClient } = require('@prisma/client')
 
 const prisma = new PrismaClient()
 
-export const getCustomerComplaints = async (req, res, next) => {
+const getCustomerComplaints = async (req, res, next) => {
   try {
     const userId = req.user.id
 
@@ -54,7 +54,7 @@ export const getCustomerComplaints = async (req, res, next) => {
   }
 }
 
-export const createCustomerComplaint = async (req, res, next) => {
+const createCustomerComplaint = async (req, res, next) => {
   try {
     const userId = req.user.id
     const { bookingId, title, description, category } = req.body
@@ -63,7 +63,7 @@ export const createCustomerComplaint = async (req, res, next) => {
       return res.status(400).json({ message: 'Booking ID, title, description, and category are required' })
     }
 
-    // Verify booking exists and belongs to user
+    
     const booking = await prisma.booking.findFirst({
       where: {
         id: bookingId,
@@ -83,15 +83,15 @@ export const createCustomerComplaint = async (req, res, next) => {
       return res.status(404).json({ message: 'Completed booking not found' })
     }
 
-    // Check if booking was completed within 5 days
+    
     const completedDate = booking.updatedAt
     const daysSince = (new Date() - completedDate) / (1000 * 60 * 60 * 24)
-    
+
     if (daysSince > 5) {
       return res.status(400).json({ message: 'Complaints can only be filed within 5 days of completing a transaction' })
     }
 
-    // Create complaint
+    
     const complaint = await prisma.complaint.create({
       data: {
         filedById: userId,
@@ -126,7 +126,7 @@ export const createCustomerComplaint = async (req, res, next) => {
   }
 }
 
-export const getOwnerComplaints = async (req, res, next) => {
+const getOwnerComplaints = async (req, res, next) => {
   try {
     const userId = req.user.id
 
@@ -186,7 +186,7 @@ export const getOwnerComplaints = async (req, res, next) => {
   }
 }
 
-export const createOwnerComplaint = async (req, res, next) => {
+const createOwnerComplaint = async (req, res, next) => {
   try {
     const userId = req.user.id
     const { bookingId, title, description, category } = req.body
@@ -195,7 +195,7 @@ export const createOwnerComplaint = async (req, res, next) => {
       return res.status(400).json({ message: 'Booking ID, title, description, and category are required' })
     }
 
-    // Verify booking exists and vehicle belongs to owner
+    
     const booking = await prisma.booking.findFirst({
       where: {
         id: bookingId,
@@ -214,15 +214,15 @@ export const createOwnerComplaint = async (req, res, next) => {
       return res.status(404).json({ message: 'Completed booking not found' })
     }
 
-    // Check if booking was completed within 5 days
+    
     const completedDate = booking.updatedAt
     const daysSince = (new Date() - completedDate) / (1000 * 60 * 60 * 24)
-    
+
     if (daysSince > 5) {
       return res.status(400).json({ message: 'Complaints can only be filed within 5 days of completing a transaction' })
     }
 
-    // Create complaint
+    
     const complaint = await prisma.complaint.create({
       data: {
         filedById: userId,
@@ -257,3 +257,4 @@ export const createOwnerComplaint = async (req, res, next) => {
   }
 }
 
+module.exports = { getCustomerComplaints, createCustomerComplaint, getOwnerComplaints, createOwnerComplaint }

@@ -1,8 +1,8 @@
-import { PrismaClient } from '../../../prisma-client-app/index.js'
+const { PrismaClient } = require('@prisma/client')
 
 const prisma = new PrismaClient()
 
-export const searchBusinesses = async (req, res, next) => {
+const searchBusinesses = async (req, res, next) => {
   try {
     const { city } = req.query
 
@@ -46,7 +46,7 @@ export const searchBusinesses = async (req, res, next) => {
       }
     })
 
-    // Calculate ratings and reviews for each business
+    
     const businessesWithRatings = await Promise.all(
       businesses.map(async (business) => {
         const reviews = await prisma.review.findMany({
@@ -64,7 +64,7 @@ export const searchBusinesses = async (req, res, next) => {
           ? reviews.reduce((sum, r) => sum + r.rating, 0) / reviews.length
           : 0
 
-        // Determine price range based on average vehicle price
+
         const avgPrice = business.vehicles.length > 0
           ? business.vehicles.reduce((sum, v) => sum + parseFloat(v.pricePerDay.toString()), 0) / business.vehicles.length
           : 0
@@ -97,7 +97,7 @@ export const searchBusinesses = async (req, res, next) => {
   }
 }
 
-export const getBusinessDetails = async (req, res, next) => {
+const getBusinessDetails = async (req, res, next) => {
   try {
     const { id } = req.params
 
@@ -130,7 +130,7 @@ export const getBusinessDetails = async (req, res, next) => {
       return res.status(404).json({ message: 'Business not found' })
     }
 
-    // Calculate average rating
+    
     const reviews = await prisma.review.findMany({
       where: {
         vehicle: {
@@ -173,7 +173,7 @@ export const getBusinessDetails = async (req, res, next) => {
   }
 }
 
-export const getBusinessCars = async (req, res, next) => {
+const getBusinessCars = async (req, res, next) => {
   try {
     const { id } = req.params
 
@@ -232,7 +232,7 @@ export const getBusinessCars = async (req, res, next) => {
   }
 }
 
-export const getBusinessReviews = async (req, res, next) => {
+const getBusinessReviews = async (req, res, next) => {
   try {
     const { id } = req.params
 
@@ -279,3 +279,4 @@ export const getBusinessReviews = async (req, res, next) => {
   }
 }
 
+module.exports = { searchBusinesses, getBusinessDetails, getBusinessCars, getBusinessReviews }

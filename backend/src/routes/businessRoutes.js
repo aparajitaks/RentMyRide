@@ -1,10 +1,10 @@
-import express from 'express'
-import {
+const express = require('express')
+const {
   searchBusinesses,
   getBusinessDetails,
   getBusinessCars,
   getBusinessReviews
-} from '../controllers/businessController.js'
+} = require('../controllers/businessController.js')
 
 const router = express.Router()
 
@@ -13,5 +13,5 @@ router.get('/:id', getBusinessDetails)
 router.get('/:id/cars', getBusinessCars)
 router.get('/:id/reviews', getBusinessReviews)
 
-export default router
+module.exports = router
 

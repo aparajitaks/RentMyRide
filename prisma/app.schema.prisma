@@ -4,7 +4,8 @@
 
 generator client {
   provider = "prisma-client-js"
-  output   = "../prisma-client-app"
+  output   = "../backend/node_modules/.prisma/client"
+
 }
 
 datasource db {
@@ -81,6 +82,8 @@ model Profile {
   state     String?
   zipCode   String?
   country   String?
+  dateOfBirth String?
+  licenseNumber String?
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 

@@ -1,8 +1,8 @@
-import { PrismaClient } from '../../../prisma-client-app/index.js'
+const { PrismaClient } = require('@prisma/client')
 
 const prisma = new PrismaClient()
 
-export const createBookingRequest = async (req, res, next) => {
+const createBookingRequest = async (req, res, next) => {
   try {
     const userId = req.user.id
     const {
@@ -19,7 +19,7 @@ export const createBookingRequest = async (req, res, next) => {
       return res.status(400).json({ message: 'Car ID, start date, and end date are required' })
     }
 
-    // Verify vehicle exists and is available
+    
     const vehicle = await prisma.vehicle.findUnique({
       where: { id: carId },
       include: {
@@ -55,7 +55,7 @@ export const createBookingRequest = async (req, res, next) => {
       return res.status(400).json({ message: 'Vehicle is already booked for the selected dates' })
     }
 
-    // Calculate total days and price
+    
     const start = new Date(startDate)
     const end = new Date(endDate)
     const totalDays = Math.ceil((end - start) / (1000 * 60 * 60 * 24))
@@ -102,7 +102,7 @@ export const createBookingRequest = async (req, res, next) => {
   }
 }
 
-export const getBookingDetails = async (req, res, next) => {
+const getBookingDetails = async (req, res, next) => {
   try {
     const userId = req.user.id
     const { id } = req.params
@@ -140,7 +140,7 @@ export const getBookingDetails = async (req, res, next) => {
       return res.status(404).json({ message: 'Booking not found' })
     }
 
-    // Check if user has access (either customer or owner)
+    
     const isCustomer = booking.userId === userId
     const isOwner = booking.vehicle.ownerId === userId
 
@@ -184,7 +184,7 @@ export const getBookingDetails = async (req, res, next) => {
   }
 }
 
-export const processPayment = async (req, res, next) => {
+const processPayment = async (req, res, next) => {
   try {
     const userId = req.user.id
     const { id } = req.params
@@ -214,7 +214,7 @@ export const processPayment = async (req, res, next) => {
       return res.status(400).json({ message: 'Payment already exists for this booking' })
     }
 
-    // Create payment
+    
     const payment = await prisma.payment.create({
       data: {
         bookingId: id,
@@ -227,7 +227,7 @@ export const processPayment = async (req, res, next) => {
       }
     })
 
-    // Update booking status to ACTIVE if start date is today or past
+    
     const today = new Date()
     today.setHours(0, 0, 0, 0)
     const startDate = new Date(booking.startDate)
@@ -255,3 +255,4 @@ export const processPayment = async (req, res, next) => {
   }
 }
 
+module.exports = { createBookingRequest, getBookingDetails, processPayment }

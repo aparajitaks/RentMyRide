@@ -1,8 +1,8 @@
-import { PrismaClient } from '../../../prisma-client-app/index.js'
+const { PrismaClient } = require('@prisma/client')
 
 const prisma = new PrismaClient()
 
-// Helper functions for date manipulation
+
 const startOfMonth = (date) => {
   return new Date(date.getFullYear(), date.getMonth(), 1)
 }
@@ -22,7 +22,7 @@ const formatDate = (date) => {
   return `${months[date.getMonth()]} ${date.getFullYear()}`
 }
 
-export const getProfile = async (req, res, next) => {
+const getProfile = async (req, res, next) => {
   try {
     const userId = req.user.id
 
@@ -45,13 +45,9 @@ export const getProfile = async (req, res, next) => {
       firstName: user.firstName,
       lastName: user.lastName,
       phone: user.phone,
-      address: user.profile?.address,
-      city: user.profile?.city,
-      state: user.profile?.state,
-      zipCode: user.profile?.zipCode,
-      country: user.profile?.country,
-      bio: user.profile?.bio,
-      avatar: user.profile?.avatar,
+      userType: user.role.toLowerCase(),
+      role: user.role,
+      profile: user.profile,
       business: user.business
     }
 
@@ -61,12 +57,12 @@ export const getProfile = async (req, res, next) => {
   }
 }
 
-export const updateProfile = async (req, res, next) => {
+const updateProfile = async (req, res, next) => {
   try {
     const userId = req.user.id
     const { firstName, lastName, phone, address, city, state, zipCode, country, bio, avatar, businessName, businessDescription } = req.body
 
-    // Update user
+    
     const user = await prisma.user.update({
       where: { id: userId },
       data: {
@@ -76,7 +72,7 @@ export const updateProfile = async (req, res, next) => {
       }
     })
 
-    // Update or create profile
+    
     await prisma.profile.upsert({
       where: { userId },
       update: {
@@ -100,18 +96,20 @@ export const updateProfile = async (req, res, next) => {
       }
     })
 
-    // Update or create business
+    
     if (businessName) {
       await prisma.business.upsert({
         where: { ownerId: userId },
         update: {
           name: businessName,
-          description: businessDescription
+          description: businessDescription,
+          city
         },
         create: {
           ownerId: userId,
           name: businessName,
-          description: businessDescription
+          description: businessDescription,
+          city
         }
       })
     }
@@ -131,13 +129,9 @@ export const updateProfile = async (req, res, next) => {
       firstName: updatedUser.firstName,
       lastName: updatedUser.lastName,
       phone: updatedUser.phone,
-      address: updatedUser.profile?.address,
-      city: updatedUser.profile?.city,
-      state: updatedUser.profile?.state,
-      zipCode: updatedUser.profile?.zipCode,
-      country: updatedUser.profile?.country,
-      bio: updatedUser.profile?.bio,
-      avatar: updatedUser.profile?.avatar,
+      userType: updatedUser.role.toLowerCase(),
+      role: updatedUser.role,
+      profile: updatedUser.profile,
       business: updatedUser.business
     }
 
@@ -147,7 +141,7 @@ export const updateProfile = async (req, res, next) => {
   }
 }
 
-export const getProfileStats = async (req, res, next) => {
+const getProfileStats = async (req, res, next) => {
   try {
     const userId = req.user.id
 
@@ -186,7 +180,7 @@ export const getProfileStats = async (req, res, next) => {
   }
 }
 
-export const getDashboardStats = async (req, res, next) => {
+const getDashboardStats = async (req, res, next) => {
   try {
     const userId = req.user.id
 
@@ -227,7 +221,7 @@ export const getDashboardStats = async (req, res, next) => {
       })
     ])
 
-    // Calculate average rating
+    
     const reviews = await prisma.review.findMany({
       where: {
         vehicle: { ownerId: userId }
@@ -254,15 +248,15 @@ export const getDashboardStats = async (req, res, next) => {
   }
 }
 
-export const getDashboardGrowth = async (req, res, next) => {
+const getDashboardGrowth = async (req, res, next) => {
   try {
     const userId = req.user.id
     const months = []
-    
+
     for (let i = 5; i >= 0; i--) {
       const monthStart = startOfMonth(subMonths(new Date(), i))
       const monthEnd = endOfMonth(subMonths(new Date(), i))
-      
+
       const [bookings, revenue] = await Promise.all([
         prisma.booking.count({
           where: {
@@ -303,7 +297,7 @@ export const getDashboardGrowth = async (req, res, next) => {
   }
 }
 
-export const getRequests = async (req, res, next) => {
+const getRequests = async (req, res, next) => {
   try {
     const userId = req.user.id
     const { status } = req.query
@@ -311,7 +305,7 @@ export const getRequests = async (req, res, next) => {
     const where = {
       vehicle: { ownerId: userId }
     }
-    
+
     if (status && status !== 'all') {
       where.status = status.toUpperCase()
     }
@@ -350,10 +344,12 @@ export const getRequests = async (req, res, next) => {
   }
 }
 
-export const approveRequest = async (req, res, next) => {
+const approveRequest = async (req, res, next) => {
   try {
     const userId = req.user.id
     const { id } = req.params
+
+    console.log(`Attempting to approve request. User: ${userId}, Booking: ${id}`)
 
     const booking = await prisma.booking.findFirst({
       where: {
@@ -364,6 +360,16 @@ export const approveRequest = async (req, res, next) => {
     })
 
     if (!booking) {
+      console.log('Booking not found or not pending')
+      
+      const exists = await prisma.booking.findUnique({ where: { id } })
+      console.log('Booking exists?', exists)
+      if (exists) {
+        const vehicle = await prisma.vehicle.findUnique({ where: { id: exists.vehicleId } })
+        console.log('Vehicle owner:', vehicle?.ownerId)
+        console.log('Current user:', userId)
+        console.log('Booking status:', exists.status)
+      }
       return res.status(404).json({ message: 'Booking request not found' })
     }
 
@@ -372,13 +378,15 @@ export const approveRequest = async (req, res, next) => {
       data: { status: 'CONFIRMED' }
     })
 
+    console.log('Request approved successfully')
     res.json({ message: 'Request approved successfully' })
   } catch (error) {
+    console.error('Error approving request:', error)
     next(error)
   }
 }
 
-export const rejectRequest = async (req, res, next) => {
+const rejectRequest = async (req, res, next) => {
   try {
     const userId = req.user.id
     const { id } = req.params
@@ -406,7 +414,7 @@ export const rejectRequest = async (req, res, next) => {
   }
 }
 
-export const getCalendarBookings = async (req, res, next) => {
+const getCalendarBookings = async (req, res, next) => {
   try {
     const userId = req.user.id
 
@@ -426,10 +434,13 @@ export const getCalendarBookings = async (req, res, next) => {
     const calendarBookings = bookings.map(booking => ({
       id: booking.id,
       title: `${booking.vehicle.make} ${booking.vehicle.model} - ${booking.user.firstName || booking.user.email}`,
-      start: booking.startDate,
-      end: booking.endDate,
+      startDate: booking.startDate,
+      endDate: booking.endDate,
       status: booking.status.toLowerCase(),
-      customerName: `${booking.user.firstName || ''} ${booking.user.lastName || ''}`.trim() || booking.user.email
+      customerName: `${booking.user.firstName || ''} ${booking.user.lastName || ''}`.trim() || booking.user.email,
+      carMake: booking.vehicle.make,
+      carModel: booking.vehicle.model,
+      totalAmount: booking.totalPrice
     }))
 
     res.json(calendarBookings)
@@ -438,13 +449,13 @@ export const getCalendarBookings = async (req, res, next) => {
   }
 }
 
-export const getCars = async (req, res, next) => {
+const getCars = async (req, res, next) => {
   try {
     const userId = req.user.id
     const { status } = req.query
 
     const where = { ownerId: userId }
-    
+
     if (status === 'available') {
       where.isAvailable = true
     } else if (status === 'booked') {
@@ -492,7 +503,7 @@ export const getCars = async (req, res, next) => {
   }
 }
 
-export const createCar = async (req, res, next) => {
+const createCar = async (req, res, next) => {
   try {
     const userId = req.user.id
     const {
@@ -501,7 +512,7 @@ export const createCar = async (req, res, next) => {
       description, features, businessId
     } = req.body
 
-    // Get or create business for owner
+    
     let business = await prisma.business.findUnique({
       where: { ownerId: userId }
     })
@@ -515,27 +526,39 @@ export const createCar = async (req, res, next) => {
       })
     }
 
+    const vehicleData = {
+      make,
+      model,
+      year: parseInt(year),
+      color,
+      licensePlate,
+      vin,
+      mileage: mileage ? parseInt(mileage) : null,
+      seats: seats ? parseInt(seats) : 5,
+      transmission,
+      fuelType,
+      pricePerDay: parseFloat(pricePerDay),
+      pricePerWeek: pricePerWeek ? parseFloat(pricePerWeek) : null,
+      pricePerMonth: pricePerMonth ? parseFloat(pricePerMonth) : null,
+      description,
+      features: typeof features === 'string' ? features : JSON.stringify(features),
+      businessId: businessId || business.id,
+      ownerId: userId,
+      isAvailable: true
+    }
+
+    
+    if (req.body.imageUrl) {
+      vehicleData.photos = {
+        create: {
+          url: req.body.imageUrl,
+          isPrimary: true
+        }
+      }
+    }
+
     const vehicle = await prisma.vehicle.create({
-      data: {
-        make,
-        model,
-        year: parseInt(year),
-        color,
-        licensePlate,
-        vin,
-        mileage: mileage ? parseInt(mileage) : null,
-        seats: seats ? parseInt(seats) : 5,
-        transmission,
-        fuelType,
-        pricePerDay: parseFloat(pricePerDay),
-        pricePerWeek: pricePerWeek ? parseFloat(pricePerWeek) : null,
-        pricePerMonth: pricePerMonth ? parseFloat(pricePerMonth) : null,
-        description,
-        features: typeof features === 'string' ? features : JSON.stringify(features),
-        businessId: businessId || business.id,
-        ownerId: userId,
-        isAvailable: true
-      },
+      data: vehicleData,
       include: {
         photos: {
           where: { isPrimary: true },
@@ -558,13 +581,13 @@ export const createCar = async (req, res, next) => {
   }
 }
 
-export const updateCar = async (req, res, next) => {
+const updateCar = async (req, res, next) => {
   try {
     const userId = req.user.id
     const { id } = req.params
     const updateData = req.body
 
-    // Verify ownership
+    
     const vehicle = await prisma.vehicle.findFirst({
       where: {
         id,
@@ -576,7 +599,7 @@ export const updateCar = async (req, res, next) => {
       return res.status(404).json({ message: 'Vehicle not found' })
     }
 
-    // Prepare update data
+    
     const data = {}
     if (updateData.make) data.make = updateData.make
     if (updateData.model) data.model = updateData.model
@@ -591,13 +614,39 @@ export const updateCar = async (req, res, next) => {
       data
     })
 
+    
+    if (updateData.imageUrl) {
+      
+      const existingPhoto = await prisma.vehiclePhoto.findFirst({
+        where: {
+          vehicleId: id,
+          isPrimary: true
+        }
+      })
+
+      if (existingPhoto) {
+        await prisma.vehiclePhoto.update({
+          where: { id: existingPhoto.id },
+          data: { url: updateData.imageUrl }
+        })
+      } else {
+        await prisma.vehiclePhoto.create({
+          data: {
+            vehicleId: id,
+            url: updateData.imageUrl,
+            isPrimary: true
+          }
+        })
+      }
+    }
+
     res.json(updated)
   } catch (error) {
     next(error)
   }
 }
 
-export const deleteCar = async (req, res, next) => {
+const deleteCar = async (req, res, next) => {
   try {
     const userId = req.user.id
     const { id } = req.params
@@ -613,7 +662,7 @@ export const deleteCar = async (req, res, next) => {
       return res.status(404).json({ message: 'Vehicle not found' })
     }
 
-    // Check for active bookings
+    
     const activeBookings = await prisma.booking.count({
       where: {
         vehicleId: id,
@@ -637,7 +686,7 @@ export const deleteCar = async (req, res, next) => {
   }
 }
 
-export const getReviews = async (req, res, next) => {
+const getReviews = async (req, res, next) => {
   try {
     const userId = req.user.id
     const { limit = 10 } = req.query
@@ -671,7 +720,7 @@ export const getReviews = async (req, res, next) => {
   }
 }
 
-export const getVehicles = async (req, res, next) => {
+const getVehicles = async (req, res, next) => {
   try {
     const userId = req.user.id
 
@@ -695,7 +744,7 @@ export const getVehicles = async (req, res, next) => {
   }
 }
 
-export const getVehicleDocuments = async (req, res, next) => {
+const getVehicleDocuments = async (req, res, next) => {
   try {
     const userId = req.user.id
     const { id } = req.params
@@ -726,7 +775,7 @@ export const getVehicleDocuments = async (req, res, next) => {
   }
 }
 
-export const uploadVehicleDocument = async (req, res, next) => {
+const uploadVehicleDocument = async (req, res, next) => {
   try {
     const userId = req.user.id
     const { id } = req.params
@@ -746,8 +795,8 @@ export const uploadVehicleDocument = async (req, res, next) => {
       return res.status(404).json({ message: 'Vehicle not found' })
     }
 
-    // In production, upload file to cloud storage and get URL
-    // For now, use a placeholder URL
+    
+    
     const fileUrl = req.file ? `/uploads/${req.file.filename}` : null
 
     if (!fileUrl) {
@@ -772,7 +821,7 @@ export const uploadVehicleDocument = async (req, res, next) => {
   }
 }
 
-export const getVehicleReminders = async (req, res, next) => {
+const getVehicleReminders = async (req, res, next) => {
   try {
     const userId = req.user.id
     const { id } = req.params
@@ -803,7 +852,7 @@ export const getVehicleReminders = async (req, res, next) => {
   }
 }
 
-export const createVehicleReminder = async (req, res, next) => {
+const createVehicleReminder = async (req, res, next) => {
   try {
     const userId = req.user.id
     const { id } = req.params
@@ -835,11 +884,11 @@ export const createVehicleReminder = async (req, res, next) => {
   }
 }
 
-export const getNotifications = async (req, res, next) => {
+const getNotifications = async (req, res, next) => {
   try {
     const userId = req.user.id
 
-    // Get recent bookings, messages, and reviews
+    
     const [recentBookings, recentMessages, recentReviews] = await Promise.all([
       prisma.booking.findMany({
         where: {
@@ -903,3 +952,25 @@ export const getNotifications = async (req, res, next) => {
   }
 }
 
+module.exports = {
+  getProfile,
+  updateProfile,
+  getProfileStats,
+  getDashboardStats,
+  getDashboardGrowth,
+  getRequests,
+  approveRequest,
+  rejectRequest,
+  getCalendarBookings,
+  getCars,
+  createCar,
+  updateCar,
+  deleteCar,
+  getReviews,
+  getVehicles,
+  getVehicleDocuments,
+  uploadVehicleDocument,
+  getVehicleReminders,
+  createVehicleReminder,
+  getNotifications
+}
