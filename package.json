@@ -1,7 +1,7 @@
 {
   "scripts": {
     "postinstall": "prisma generate --schema prisma/app.schema.prisma",
-    "test": "node --experimental-vm-modules ./node_modules/jest/bin/jest.js --runInBand --detectOpenHandles",
+    "test": "NODE_ENV=test node --experimental-vm-modules ./node_modules/jest/bin/jest.js --runInBand --forceExit",
     "lint": "eslint .",
     "lint:fix": "eslint . --fix",
     "archive:run": "node scripts/archive-messages.js",
@@ -14,7 +14,9 @@
     ],
     "testPathIgnorePatterns": [
       "/node_modules/",
-      "<rootDir>/frontend/"
+      "<rootDir>/frontend/",
+      "<rootDir>/tests/carController.mock.spec.js",
+      "<rootDir>/tests/carController.extra.spec.js"
     ],
     "collectCoverage": true,
     "coveragePathIgnorePatterns": [

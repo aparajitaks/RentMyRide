@@ -1,6 +1,5 @@
 require("dotenv").config();
-const { PrismaClient } = require("@prisma/client");
-const prisma = new PrismaClient();
+const prisma = require("../backend/src/lib/prisma");
 const path = require("path");
 const { pathToFileURL } = require("url");
 const request = require("supertest");
@@ -29,12 +28,9 @@ describe("API E2E tests for bookings endpoints (in-process)", () => {
   };
 
   beforeAll(async () => {
-    // dynamic ESM import of Express app
-    const appPath = pathToFileURL(
-      path.resolve(__dirname, "../backend/src/app.js"),
-    ).href;
-    const mod = await import(appPath);
-    api = request(mod.default);
+    // Import Express app using CommonJS
+    const app = require("../backend/src/app.js");
+    api = request(app);
 
     // ensure DB is reachable to reduce transient flakiness
     await waitForDb(5);
