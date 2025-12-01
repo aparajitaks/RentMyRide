@@ -61,7 +61,7 @@ jobs:
       - name: Prisma validate
         env:
           DATABASE_URL_APP: postgresql://postgres:postgres@localhost:5432/app?schema=public
-        run: npx prisma validate
+        run: npx prisma validate --schema prisma/app.schema.prisma
 
       - name: Prisma db push (CI ephemeral DB)
         env:
