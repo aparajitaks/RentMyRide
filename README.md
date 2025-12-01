@@ -1,205 +1,270 @@
-# RentMyRide
+# 🚗 **RentMyRide – Systematic Project Requirements (Clean Version)**
 
-Login Page:
-Customers
-Owners
-Terms and Conditions page
-Customer Section:
-Home Page: (Need to determine content, possibly a nav bar/table)
-Profile Page
-Search Bar: (Will fetch data of listed businesses in the searched city from our database)
-After searching and selecting a city: A list of businesses will appear, similar to Google, with price ranges, ratings, owner name, etc.
-After selecting a business: The business page will open with:
-Business details
-Ratings and reviews
-Chat section for that business ❓
-Car cards with pricing and availability dates
-After selecting a car: Proceed to the booking request page. We will autofill the customer's details from their profile. They will then fill in where they want to get the car and for how long they need it. A complete request will be sent to the business.
-After approval (which may take time): The payment system will initiate.
-Some more features:
-People may rate the cars from their booking history.
-A log of places they traveled.
-They can also upload their travel pictures.
-Owner Section:
-After Login:
-Notification Bar: Reminding them of important details (e.g., delayed documentation uploads, mostly related to our platform).
-Home: With a line graph of their business growth, ratings, and reviews.
-Right Panel: A list of requests: pending, actively rented, and done (customer has returned the car, payment and all have been completed).
-Calendar Page: Where stickers of cars will be pasted on dates when the cars are booked.
-List of cars: Which are free for now.
-Their own profile: Reviews, ratings, grey areas, etc.
-They can see customer profiles: Who have requested car rental. If customers have bad reviews by businesses.
-Map Section: Where they will enter the tracking ID of their tracking device (if any) and can track the vehicle. ❓
-Vehicle Section: Where they can manage all vehicle documentations and reminders.
-Extra Features We Want to Add:
-Complaint Box: On both customer and business profiles, where they can file complaints.
-Examples: If a customer has caused damage, or may have been legally fined and didn't pay the price, or anything similar. Customers can file complaints against businesses who have tried to charge extra money or made false claims about cars or damage.
-Complaint Resolution: Pending complaints; resolved complaints will be removed if found non-guilty.
-Complaint Timeline: You can only file a complaint within 5 days of completing a business transaction.
-Complaint Eligibility: This will only work for those who have a history of doing business.
-Chat Section:
-Mostly like WhatsApp.
-We can also share photos and videos of cars.
-Cannot delete or edit any kind of message.
-Additionally, the chat will remain for 15 days, in case of need of resolving any issue.
-If some case is going on between the owner and customer, the chats will remain until resolved.
+# **1. Authentication Module**
 
-We have to complete at least 50 % of our Project by mid sem ..
+### **Login Pages**
 
-Work heavy stuffs : Chat section
-: user - owner approval workflow
+* Customer Login
+* Owner Login
+* Terms & Conditions Page (View-only)
 
-## Archive job and scheduler
+# **2. Customer Module**
 
-We automatically archive old chat messages to `messages_archive` to keep the main table lean.
+## **2.1 Home Page**
 
-Manual run:
+* Navigation bar
+* Quick access to profile, search, bookings
+* Featured cities or offers (Optional)
 
-1. Ensure `DATABASE_URL_APP` (or your DB URL) is configured in `.env`.
-2. Run:
+## **2.2 Profile Page**
 
-   - `npm run archive:run`
+* Personal details
+* Uploaded documents
+* Past bookings & travel logs
+* Picture uploads for memories
+* Rating history (cars they rated)
 
-Daily scheduler (runs at 02:00 UTC by default):
+## **2.3 Search Workflow**
 
-1. Ensure `TZ` is set if you want a specific timezone (default: `UTC`).
-2. Run:
+### ➤ **Step 1: Search Bar**
 
-   - `npm run archive:schedule`
+* Search by city → fetch businesses from DB
 
-Notes:
+### ➤ **Step 2: Businesses List Page**
 
-- Scheduler uses `node-cron` and logs start/finish of each run.
-- The archival window is messages with `updatedAt <= now() - 15 days`.
-- You can change the schedule in `scripts/archive-scheduler.js` (cron expression).
+Google-like business list showing:
 
-## Environment variables
+* Name of rental business
+* Rating
+* Price range
+* Owner name
+* Basic details
+* Thumbnail image
 
-Create a `.env` file at repo root with at least:
+### ➤ **Step 3: Business Page**
+
+* Business information
+* Ratings & Reviews
+* Car listing cards
+* Pricing & availability
+* Optional: Chat section with the business
+
+### ➤ **Step 4: Car Selection Page**
+
+* Car details
+* Pricing per day
+* Availability calendar
+
+### ➤ **Step 5: Booking Request**
+
+Auto-filled fields from customer profile:
+
+* Customer details
+* Pickup location
+* Start & end dates
+* Additional info
+  → Sends booking request to owner
+
+### ➤ **Step 6: After Approval**
+
+* Payment flow begins (integration pending)
+
+## **2.4 Additional Customer Features**
+
+* Rate cars from booking history
+* Travel log of places visited
+* Upload travel pictures
+* Complaint Box (customer → business)
+
+---
+
+# **3. Owner Module**
+
+## **3.1 After Login**
+
+### **Dashboard**
+
+* Notification bar
+* Reminders (pending documents, platform notifications)
+
+### **Graphs**
+
+* Line graph showing business growth
+* Ratings overview
+* Review summary
+
+### **Right Panel**
+
+* Requests grouped as:
+
+  * Pending
+  * Active rentals
+  * Completed
+
+### **Calendar Page**
+
+* Booked cars displayed using stickers on specific dates
+
+### **List of Available Cars**
+
+* Free cars displayed with status filters
+
+### **Owner Profile**
+
+* Reviews
+* Ratings
+* Grey areas (warning flags, pending complaints)
+
+### **Customer Profile Viewer**
+
+* Owners can see customer history
+* View customer ratings from previous owners
+
+## **3.2 Vehicle Management**
+
+* Upload & manage documents
+* Document expiry reminders
+* Vehicle status (active / inactive)
+
+## **3.3 Tracking (Optional Feature)**
+
+* Map view
+* Enter tracking ID from GPS device
+* Show car’s live or last-known location
+
+## **3.4 Complaint Box (Owner → Customer)**
+
+* File complaints
+* View complaint status
+
+---
+
+# **4. Complaint Resolution System**
+
+### **Features**
+
+* Complaint Box on both sides
+* Types of complaints:
+
+  * Damage
+  * Legal fine not paid
+  * False charges
+  * Overcharging by owner
+
+### **Logic**
+
+* Only users with completed business history can file complaints
+* Complaints can be filed only within **5 days**
+* Complaints categorized as:
+
+  * Pending
+  * Under Review
+  * Resolved
+* If found non-guilty → complaint removed
+* If dispute ongoing → chat history remains longer
+
+---
+
+# **5. Chat Module (Heavy Feature)**
+
+🔧 **Most complex part of mid-sem work**
+
+### **Chat Functionality**
+
+* Customer ↔ Owner chat (like WhatsApp)
+* Share photos/videos
+* No option to delete or edit messages
+* Messages auto-deleted after **15 days**
+* If a case/complaint is active → exempt from deletion
+
+### **Archival Job**
+
+* Messages older than **15 days** → moved to `messages_archive`
+* Keeps main message table small
+
+---
+
+# **6. Archival Job & Scheduler (Already Implemented)**
+
+### **Manual Archival**
+
+```
+npm run archive:run
+```
+
+### **Cron Scheduler**
+
+Runs daily at 02:00 UTC:
+
+```
+npm run archive:schedule
+```
+
+### **Important Settings**
+
+`.env`
 
 ```
 DATABASE_URL_APP=postgres://...
 TZ=UTC
 ```
 
-The test suite expects the database to be reachable and schema to be prepared/migrated.
+---
 
-## Docker Usage
+# **7. Docker Setup**
 
-We support two deployment modes:
-
-1. API-only (backend + Postgres)
-2. Full stack (backend + Postgres + Nginx-served React frontend)
-
-### API-only
-
-Brings up Postgres and the Express API (API serves health + JSON, not static assets unless built multi-stage).
-
-Run:
+## **7.1 API-Only Setup**
 
 ```
 docker compose -f devops/docker-compose.yml up -d db api
 ```
 
-Health check:
-
-```
-curl http://localhost:5001/api/health
-```
-
-### Full stack with Nginx frontend
-
-Builds frontend separately using `devops/Dockerfile.frontend` and serves static files + proxies `/api/*` to the backend service.
-
-Run:
-
-```
-docker compose -f devops/docker-compose.yml up -d db api frontend
-```
-
-Visit the app at:
-
-```
-http://localhost/
-```
-
-API still available (direct) at:
+API Health:
 
 ```
 http://localhost:5001/api/health
 ```
 
-### Multi-stage backend image
+## **7.2 Full Stack Setup**
 
-`devops/Dockerfile` builds both backend and frontend (placing built assets in `backend/public`) so you can also serve the SPA directly from Express if you prefer fewer containers.
+```
+docker compose -f devops/docker-compose.yml up -d db api frontend
+```
 
-To use that unified image only:
+Frontend:
+
+```
+http://localhost/
+```
+
+## **7.3 Unified Backend+Frontend Image**
 
 ```
 docker build -f devops/Dockerfile -t rentmyride-unified .
 docker run -p 5001:5001 rentmyride-unified
 ```
 
-Then open:
-
-```
-http://localhost:5001/
-```
-
-### Frontend-only image (Nginx)
-
-`devops/Dockerfile.frontend` builds a production React bundle and serves it via Nginx with a SPA fallback and `/api/` proxy pointing to the `api` service.
-
-### Common Environment Variables
-
-Ensure `DATABASE_URL_APP` is set (Compose sets this automatically for the `api` container). For local non-Docker development create `.env`:
-
-```
-DATABASE_URL_APP=postgresql://app:app@localhost:5432/rentmyride
-PORT=5001
-```
-
-### Cleaning Up
-
-Stop all containers:
+## **7.4 Cleanup**
 
 ```
 docker compose -f devops/docker-compose.yml down
+docker compose -f devops/docker-compose.yml down -v   # remove DB data
 ```
 
-Remove volumes (including database data) if needed:
+---
 
-```
-docker compose -f devops/docker-compose.yml down -v
-```
-
-### Notes
-
-- Frontend Nginx container depends on backend `api` and will proxy `/api/` paths.
-- For production, consider adding caching headers or a CDN in front of the Nginx container.
-- Health endpoints: `GET /api/health` (API) and `GET /healthz` (Nginx static) return JSON.
-
-### Pre-push Verification
-
-Run the automated script to validate DB + patches + tests before pushing changes:
+# **8. Pre-Push Verification**
 
 ```
 chmod +x devops/prepush-verify.sh
 ./devops/prepush-verify.sh
 ```
 
-It will:
+Runs:
+✓ DB spin-up
+✓ Prisma schema push
+✓ SQL patches
+✓ DB tests
+✓ Jest tests
+✓ Summary
 
-1. Start Postgres via docker compose (db only)
-2. Wait for health
-3. Push Prisma schema
-4. Apply raw SQL patches
-5. Run DB test harness (`prisma/db-tests.js`)
-6. Execute Jest test suite
-7. Print summary and exit
-
-Stop containers afterward (optional):
-
-```
-docker compose -f devops/docker-compose.yml down
-```
