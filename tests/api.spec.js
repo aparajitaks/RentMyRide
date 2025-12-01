@@ -1,5 +1,5 @@
 require("dotenv").config();
-const { PrismaClient } = require("../prisma-client-app");
+const { PrismaClient } = require("@prisma/client");
 const prisma = new PrismaClient();
 const path = require("path");
 const { pathToFileURL } = require("url");

@@ -13,7 +13,7 @@ describe('archive-messages script', () => {
       this.$disconnect = mockDisconnect;
     };
 
-    jest.doMock('../prisma-client-app', () => ({ PrismaClient: PrismaMock }));
+    jest.doMock('@prisma/client', () => ({ PrismaClient: PrismaMock }));
     const mod = require('../scripts/archive-messages');
     await expect(mod.main()).resolves.toBeUndefined();
     expect(mockExec).toHaveBeenCalledTimes(2);
@@ -28,7 +28,7 @@ describe('archive-messages script', () => {
       this.$executeRawUnsafe = mockExec;
       this.$disconnect = mockDisconnect;
     };
-    jest.doMock('../prisma-client-app', () => ({ PrismaClient: PrismaMock }));
+    jest.doMock('@prisma/client', () => ({ PrismaClient: PrismaMock }));
     const mod = require('../scripts/archive-messages');
     await expect(mod.main()).resolves.toBeUndefined();
     expect(mockExec).toHaveBeenCalled();
