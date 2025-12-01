@@ -1,7 +1,7 @@
 {
   "scripts": {
-    "postinstall": "prisma generate --schema prisma/app.schema.prisma && cd backend && npm run postinstall || true",
-    "pretest": "prisma generate --schema prisma/app.schema.prisma && cd backend && npm run postinstall || true",
+    "postinstall": "prisma generate --schema prisma/app.schema.prisma && mkdir -p backend/node_modules/.prisma && rm -rf backend/node_modules/.prisma/client && cp -r node_modules/.prisma/client backend/node_modules/.prisma/client",
+    "pretest": "prisma generate --schema prisma/app.schema.prisma && mkdir -p backend/node_modules/.prisma && rm -rf backend/node_modules/.prisma/client && cp -r node_modules/.prisma/client backend/node_modules/.prisma/client",
     "test": "NODE_ENV=test node --experimental-vm-modules ./node_modules/jest/bin/jest.js --runInBand --forceExit",
     "lint": "eslint .",
     "lint:fix": "eslint . --fix",
