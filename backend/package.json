@@ -4,7 +4,7 @@
   "description": "Backend API for RentMyRide car rental platform",
   "main": "src/server.js",
   "scripts": {
-    "postinstall": "prisma generate --schema ../prisma/app.schema.prisma",
+    "postinstall": "mkdir -p node_modules/.prisma && ln -sf ../../node_modules/.prisma/client node_modules/.prisma/client || true",
     "start": "node src/server.js",
     "dev": "node --watch src/server.js",
     "test": "node --experimental-vm-modules ./node_modules/jest/bin/jest.js"
