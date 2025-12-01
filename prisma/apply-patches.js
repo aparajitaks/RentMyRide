@@ -3,7 +3,7 @@ require("dotenv").config();
 
 const fs = require("fs").promises;
 const path = require("path");
-const { PrismaClient } = require("../prisma-client-app");
+const { PrismaClient } = require("@prisma/client");
 
 async function main() {
   const prisma = new PrismaClient();

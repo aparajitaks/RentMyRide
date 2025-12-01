@@ -68,6 +68,11 @@ jobs:
           DATABASE_URL_APP: postgresql://postgres:postgres@localhost:5432/app?schema=public
         run: npx prisma db push --schema prisma/app.schema.prisma
 
+      - name: Generate Prisma Client
+        env:
+          DATABASE_URL_APP: postgresql://postgres:postgres@localhost:5432/app?schema=public
+        run: npx prisma generate --schema prisma/app.schema.prisma
+
       - name: Apply raw SQL patches
         env:
           DATABASE_URL_APP: postgresql://postgres:postgres@localhost:5432/app?schema=public
