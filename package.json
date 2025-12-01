@@ -1,6 +1,7 @@
 {
   "scripts": {
     "postinstall": "prisma generate --schema prisma/app.schema.prisma",
+    "pretest": "prisma generate --schema prisma/app.schema.prisma",
     "test": "NODE_ENV=test node --experimental-vm-modules ./node_modules/jest/bin/jest.js --runInBand --forceExit",
     "lint": "eslint .",
     "lint:fix": "eslint . --fix",
