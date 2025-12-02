@@ -16,6 +16,27 @@ npx prisma db push --schema=prisma/app.schema.prisma
 
 ---
 
+## 📋 **For Evaluators (Quick Evaluation Setup)**
+
+The `.env` files are configured with working credentials. Simply copy and paste the following into your `.env` files in the root and backend directories:
+
+### **Root `./.env`**
+```env
+DATABASE_URL="postgresql://neondb_owner:npg_iqFxJjvm62eV@ep-polished-bird-a4gytl44.us-east-1.aws.neon.tech/neondb?sslmode=require"
+DATABASE_URL_APP="postgresql://neondb_owner:npg_iqFxJjvm62eV@ep-polished-bird-a4gytl44.us-east-1.aws.neon.tech/neondb?sslmode=require"
+```
+
+### **Backend `./backend/.env`**
+```env
+DATABASE_URL_APP="postgresql://neondb_owner:npg_iqFxJjvm62eV@ep-polished-bird-a4gytl44.us-east-1.aws.neon.tech/neondb?sslmode=require"
+JWT_SECRET="rentmyride-secret-key-2025"
+PORT=5001
+```
+
+After setting up the `.env` files, run the quick setup commands above and start both services. The application will be fully functional.
+
+---
+
 # **Project Requirements and Features**
 
 # **1. Authentication Module**
