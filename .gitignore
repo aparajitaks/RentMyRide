@@ -1,3 +1,8 @@
 node_modules
 
 /generated/prisma
+
+# Environment variables - keep sensitive data out of version control
+.env
+.env.local
+.env.*.local
