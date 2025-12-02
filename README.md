@@ -1,6 +1,18 @@
 # 🚗 **RentMyRide – Car Rental Platform**
 
-> **For Evaluators:** Please see [SETUP_FOR_EVALUATORS.md](./SETUP_FOR_EVALUATORS.md) for quick setup instructions.
+## Quick Setup
+
+```bash
+npm install
+cd backend && npm install && cd ..
+cd new_frontend3 && npm install && cd ..
+npx prisma db push --schema=prisma/app.schema.prisma
+```
+
+**Start the application:**
+
+- Backend: `cd backend && npm start` (port 5001)
+- Frontend: `cd new_frontend3 && npm run dev` (port 3000)
 
 ---
 
@@ -10,77 +22,77 @@
 
 ### **Login Pages**
 
-* Customer Login
-* Owner Login
-* Terms & Conditions Page (View-only)
+- Customer Login
+- Owner Login
+- Terms & Conditions Page (View-only)
 
 # **2. Customer Module**
 
 ## **2.1 Home Page**
 
-* Navigation bar
-* Quick access to profile, search, bookings
-* Featured cities or offers (Optional)
+- Navigation bar
+- Quick access to profile, search, bookings
+- Featured cities or offers (Optional)
 
 ## **2.2 Profile Page**
 
-* Personal details
-* Uploaded documents
-* Past bookings & travel logs
-* Picture uploads for memories
-* Rating history (cars they rated)
+- Personal details
+- Uploaded documents
+- Past bookings & travel logs
+- Picture uploads for memories
+- Rating history (cars they rated)
 
 ## **2.3 Search Workflow**
 
 ### ➤ **Step 1: Search Bar**
 
-* Search by city → fetch businesses from DB
+- Search by city → fetch businesses from DB
 
 ### ➤ **Step 2: Businesses List Page**
 
 Google-like business list showing:
 
-* Name of rental business
-* Rating
-* Price range
-* Owner name
-* Basic details
-* Thumbnail image
+- Name of rental business
+- Rating
+- Price range
+- Owner name
+- Basic details
+- Thumbnail image
 
 ### ➤ **Step 3: Business Page**
 
-* Business information
-* Ratings & Reviews
-* Car listing cards
-* Pricing & availability
-* Optional: Chat section with the business
+- Business information
+- Ratings & Reviews
+- Car listing cards
+- Pricing & availability
+- Optional: Chat section with the business
 
 ### ➤ **Step 4: Car Selection Page**
 
-* Car details
-* Pricing per day
-* Availability calendar
+- Car details
+- Pricing per day
+- Availability calendar
 
 ### ➤ **Step 5: Booking Request**
 
 Auto-filled fields from customer profile:
 
-* Customer details
-* Pickup location
-* Start & end dates
-* Additional info
+- Customer details
+- Pickup location
+- Start & end dates
+- Additional info
   → Sends booking request to owner
 
 ### ➤ **Step 6: After Approval**
 
-* Payment flow begins (integration pending)
+- Payment flow begins (integration pending)
 
 ## **2.4 Additional Customer Features**
 
-* Rate cars from booking history
-* Travel log of places visited
-* Upload travel pictures
-* Complaint Box (customer → business)
+- Rate cars from booking history
+- Travel log of places visited
+- Upload travel pictures
+- Complaint Box (customer → business)
 
 ---
 
@@ -90,58 +102,58 @@ Auto-filled fields from customer profile:
 
 ### **Dashboard**
 
-* Notification bar
-* Reminders (pending documents, platform notifications)
+- Notification bar
+- Reminders (pending documents, platform notifications)
 
 ### **Graphs**
 
-* Line graph showing business growth
-* Ratings overview
-* Review summary
+- Line graph showing business growth
+- Ratings overview
+- Review summary
 
 ### **Right Panel**
 
-* Requests grouped as:
+- Requests grouped as:
 
-  * Pending
-  * Active rentals
-  * Completed
+  - Pending
+  - Active rentals
+  - Completed
 
 ### **Calendar Page**
 
-* Booked cars displayed using stickers on specific dates
+- Booked cars displayed using stickers on specific dates
 
 ### **List of Available Cars**
 
-* Free cars displayed with status filters
+- Free cars displayed with status filters
 
 ### **Owner Profile**
 
-* Reviews
-* Ratings
-* Grey areas (warning flags, pending complaints)
+- Reviews
+- Ratings
+- Grey areas (warning flags, pending complaints)
 
 ### **Customer Profile Viewer**
 
-* Owners can see customer history
-* View customer ratings from previous owners
+- Owners can see customer history
+- View customer ratings from previous owners
 
 ## **3.2 Vehicle Management**
 
-* Upload & manage documents
-* Document expiry reminders
-* Vehicle status (active / inactive)
+- Upload & manage documents
+- Document expiry reminders
+- Vehicle status (active / inactive)
 
 ## **3.3 Tracking (Optional Feature)**
 
-* Map view
-* Enter tracking ID from GPS device
-* Show car’s live or last-known location
+- Map view
+- Enter tracking ID from GPS device
+- Show car’s live or last-known location
 
 ## **3.4 Complaint Box (Owner → Customer)**
 
-* File complaints
-* View complaint status
+- File complaints
+- View complaint status
 
 ---
 
@@ -149,25 +161,26 @@ Auto-filled fields from customer profile:
 
 ### **Features**
 
-* Complaint Box on both sides
-* Types of complaints:
+- Complaint Box on both sides
+- Types of complaints:
 
-  * Damage
-  * Legal fine not paid
-  * False charges
-  * Overcharging by owner
+  - Damage
+  - Legal fine not paid
+  - False charges
+  - Overcharging by owner
 
 ### **Logic**
 
-* Only users with completed business history can file complaints
-* Complaints can be filed only within **5 days**
-* Complaints categorized as:
+- Only users with completed business history can file complaints
+- Complaints can be filed only within **5 days**
+- Complaints categorized as:
 
-  * Pending
-  * Under Review
-  * Resolved
-* If found non-guilty → complaint removed
-* If dispute ongoing → chat history remains longer
+  - Pending
+  - Under Review
+  - Resolved
+
+- If found non-guilty → complaint removed
+- If dispute ongoing → chat history remains longer
 
 ---
 
@@ -177,16 +190,16 @@ Auto-filled fields from customer profile:
 
 ### **Chat Functionality**
 
-* Customer ↔ Owner chat (like WhatsApp)
-* Share photos/videos
-* No option to delete or edit messages
-* Messages auto-deleted after **15 days**
-* If a case/complaint is active → exempt from deletion
+- Customer ↔ Owner chat (like WhatsApp)
+- Share photos/videos
+- No option to delete or edit messages
+- Messages auto-deleted after **15 days**
+- If a case/complaint is active → exempt from deletion
 
 ### **Archival Job**
 
-* Messages older than **15 days** → moved to `messages_archive`
-* Keeps main message table small
+- Messages older than **15 days** → moved to `messages_archive`
+- Keeps main message table small
 
 ---
 
@@ -273,4 +286,3 @@ Runs:
 ✓ DB tests
 ✓ Jest tests
 ✓ Summary
-
