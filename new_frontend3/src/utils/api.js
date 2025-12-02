@@ -1,4 +1,4 @@
-const baseURL = "https://rentmyride-1.onrender.com/api";
+const baseURL = "https://rentmyride-1.onrender.com";
 
 
 const buildRequestOptions = (method, body, customHeaders = {}) => {
