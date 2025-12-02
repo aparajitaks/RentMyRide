@@ -1,4 +1,10 @@
-# 🚗 **RentMyRide – Systematic Project Requirements (Clean Version)**
+# 🚗 **RentMyRide – Car Rental Platform**
+
+> **For Evaluators:** Please see [SETUP_FOR_EVALUATORS.md](./SETUP_FOR_EVALUATORS.md) for quick setup instructions.
+
+---
+
+# **Project Requirements and Features**
 
 # **1. Authentication Module**
 
