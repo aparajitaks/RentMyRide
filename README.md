@@ -6,7 +6,7 @@
 npm install
 cd backend && npm install && cd ..
 cd frontend && npm install && cd ..
-npx prisma db push --schema=prisma/app.schema.prisma
+npx prisma db push --schema=backend/prisma/app.schema.prisma
 ```
 
 **Setup environment variables:**
