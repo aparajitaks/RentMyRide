@@ -68,35 +68,35 @@ const handleResponse = async (response) => {
 
 const api = {
   get: async (url, config = {}) => {
-    const fullUrl = baseURL + url
+    const fullUrl = baseURL + '/api' + url
     const options = buildRequestOptions('GET', null, config.headers || {})
     const response = await fetch(fullUrl, options)
     return handleResponse(response)
   },
 
   post: async (url, data = null, config = {}) => {
-    const fullUrl = baseURL + url
+    const fullUrl = baseURL + '/api' + url
     const options = buildRequestOptions('POST', data, config.headers || {})
     const response = await fetch(fullUrl, options)
     return handleResponse(response)
   },
 
   put: async (url, data = null, config = {}) => {
-    const fullUrl = baseURL + url
+    const fullUrl = baseURL + '/api' + url
     const options = buildRequestOptions('PUT', data, config.headers || {})
     const response = await fetch(fullUrl, options)
     return handleResponse(response)
   },
 
   delete: async (url, config = {}) => {
-    const fullUrl = baseURL + url
+    const fullUrl = baseURL + '/api' + url
     const options = buildRequestOptions('DELETE', null, config.headers || {})
     const response = await fetch(fullUrl, options)
     return handleResponse(response)
   },
 
   patch: async (url, data = null, config = {}) => {
-    const fullUrl = baseURL + url
+    const fullUrl = baseURL + '/api' + url
     const options = buildRequestOptions('PATCH', data, config.headers || {})
     const response = await fetch(fullUrl, options)
     return handleResponse(response)
