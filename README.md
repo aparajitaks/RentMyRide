@@ -5,14 +5,14 @@
 ```bash
 npm install
 cd backend && npm install && cd ..
-cd new_frontend3 && npm install && cd ..
+cd frontend && npm install && cd ..
 npx prisma db push --schema=prisma/app.schema.prisma
 ```
 
 **Start the application:**
 
 - Backend: `cd backend && npm start` (port 5001)
-- Frontend: `cd new_frontend3 && npm run dev` (port 3000)
+- Frontend: `cd frontend && npm run dev` (port 3000)
 
 ---
 

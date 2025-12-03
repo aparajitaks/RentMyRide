@@ -7,8 +7,7 @@
     "lint:fix": "eslint . --fix",
     "archive:run": "node scripts/archive-messages.js",
     "archive:schedule": "node scripts/archive-scheduler.js"
-    
-},
+  },
   "jest": {
     "testEnvironment": "node",
     "testMatch": [
@@ -23,8 +22,7 @@
     "collectCoverage": true,
     "coveragePathIgnorePatterns": [
       "/node_modules/",
-      "<rootDir>/frontend/",
-      "<rootDir>/prisma-client-app/"
+      "<rootDir>/frontend/"
     ],
     "coverageDirectory": "coverage",
     "coverageReporters": [
