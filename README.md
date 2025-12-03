@@ -9,10 +9,29 @@ cd frontend && npm install && cd ..
 npx prisma db push --schema=prisma/app.schema.prisma
 ```
 
+**Setup environment variables:**
+
+Frontend (`frontend/.env.local`):
+```bash
+cp frontend/.env.example frontend/.env.local
+# Edit .env.local to set VITE_API_URL=http://localhost:5001
+```
+
 **Start the application:**
 
 - Backend: `cd backend && npm start` (port 5001)
 - Frontend: `cd frontend && npm run dev` (port 3000)
+
+---
+
+## 🚀 Deployment
+
+For Vercel deployment instructions, see [DEPLOYMENT.md](DEPLOYMENT.md)
+
+Quick deploy:
+- Deploy backend first, note the URL
+- Set `VITE_API_URL` in frontend Vercel environment variables
+- Deploy frontend
 
 ---
 
