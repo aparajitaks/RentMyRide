@@ -61,22 +61,22 @@ jobs:
       - name: Prisma validate
         env:
           DATABASE_URL_APP: postgresql://postgres:postgres@localhost:5432/app?schema=public
-        run: npx prisma validate --schema prisma/app.schema.prisma
+        run: npx prisma validate --schema backend/prisma/app.schema.prisma
 
       - name: Prisma db push (CI ephemeral DB)
         env:
           DATABASE_URL_APP: postgresql://postgres:postgres@localhost:5432/app?schema=public
-        run: npx prisma db push --schema prisma/app.schema.prisma
+        run: npx prisma db push --schema backend/prisma/app.schema.prisma
 
       - name: Generate Prisma Client
         env:
           DATABASE_URL_APP: postgresql://postgres:postgres@localhost:5432/app?schema=public
-        run: npx prisma generate --schema prisma/app.schema.prisma
+        run: npx prisma generate --schema backend/prisma/app.schema.prisma
 
       - name: Apply raw SQL patches
         env:
           DATABASE_URL_APP: postgresql://postgres:postgres@localhost:5432/app?schema=public
-        run: node prisma/apply-patches.js
+        run: node backend/prisma/apply-patches.js
 
       - name: Lint
         run: npm run lint
