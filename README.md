@@ -1,4 +1,4 @@
-# 🚗 **RentMyRide – Car Rental Platform**
+# RentMyRide – Car Rental Platform
 
 ## Quick Setup
 
@@ -24,7 +24,7 @@ cp frontend/.env.example frontend/.env.local
 
 ---
 
-## 🚀 Deployment
+## Deployment
 
 For Vercel deployment instructions, see [DEPLOYMENT.md](DEPLOYMENT.md)
 
@@ -35,7 +35,7 @@ Quick deploy:
 
 ---
 
-## 📋 **For Evaluators (Quick Evaluation Setup)**
+##For Evaluators (Quick Evaluation Setup)
 
 The `.env` files are configured with working credentials. Simply copy and paste the following into your `.env` files in the root and backend directories:
 
