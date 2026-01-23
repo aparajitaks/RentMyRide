@@ -40,15 +40,15 @@ function LoginPage({ login }) {
             <p className="brand-tagline">Your journey starts here</p>
             <div className="brand-features">
               <div className="feature-item">
-                <span className="feature-icon">🚗</span>
+                {/* <span className="feature-icon">🚗</span> */}
                 <span>Wide Selection of Vehicles</span>
               </div>
               <div className="feature-item">
-                <span className="feature-icon">⚡</span>
+                {/* <span className="feature-icon">⚡</span> */}
                 <span>Instant Booking</span>
               </div>
               <div className="feature-item">
-                <span className="feature-icon">🔒</span>
+                {/* <span className="feature-icon">🔒</span> */}
                 <span>Secure & Reliable</span>
               </div>
             </div>
